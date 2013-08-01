@@ -1,5 +1,5 @@
 #
-# weibo_http_request.py
+# log.py
 #
 # ling0322 2013-07-31
 #
