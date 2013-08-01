@@ -1,5 +1,6 @@
 import weibo_http_request
 import weibo_login
+import weibo_reply
 
 if __name__ == '__main__':
 
@@ -8,5 +9,4 @@ if __name__ == '__main__':
 
     login = weibo_login.WeiboLogin(username, password)
     http_request = weibo_http_request.WeiboHttpRequest(login)
-    print(http_request.get('http://www.weibo.com/1097414213/A2JkptPA9'))
-
+    print(weibo_reply.get_weibo_reply(http_request, 'http://e.weibo.com/1712312484/A2zsZqYnc'))

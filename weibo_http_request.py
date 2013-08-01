@@ -27,10 +27,11 @@ class WeiboHttpRequest:
     def __init__(self, weibo_login):
         if self.__load_cookies() == False:
             log.log("http_request", "get cookies from weibo.com")
-        self.__cookies = weibo_login.get_cookie()
-        if self.__cookies == None:
-            raise Exception("Unable to get cookie")
-        self.__dump_cookies()
+        else:
+            self.__cookies = weibo_login.get_cookie()
+            if self.__cookies == None:
+                raise Exception("Unable to get cookie")
+            self.__dump_cookies()
 
     def __dump_cookies(self):
         with open(self.COOKIES_FILE, 'w') as fp:
@@ -84,16 +85,22 @@ class WeiboHttpRequest:
         A GET request to the url and returns the content of that url in str type
         """
 
+        log.log("http_request", "GET {0}".format(url))
+
         request = urllib.request.Request(url = url, headers = self.__build_header())
         fp = urllib.request.urlopen(request)
         http_message = fp.info()
         content = fp.read()
         fp.close()
+        
+        content_len = len(content)
+        log.log("http_request", "GET {0} ... OK {1} Bytes".format(url, content_len))
 
         if http_message.get('Content-Encoding') == 'gzip':
             buf = BytesIO(content)
             f = gzip.GzipFile(fileobj = buf)
             content = f.read()
+            log.log("http_request", "unzip {0} -> {1}".format(content_len, len(content)))
 
         return content.decode('utf-8')
 

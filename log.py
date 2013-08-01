@@ -15,5 +15,5 @@ def log(tag, text):
         log("login", "login error")
         log("http_request", "404 page not found")
     """
-    datetime_str = datetime.datetime.now().strftime("%Y-%m-%d %H:%m:%S")
+    datetime_str = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     print("[{0}] {1}: {2}".format(datetime_str, tag, text))
