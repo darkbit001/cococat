@@ -174,7 +174,7 @@ def get_weibo_reply(http_request, weibo_url, reply_max = 200):
     weibo_reply = []
     for page in range(1, 100):
         reply_list = __get_reply_at_page(http_request, mid, page)
-        log.log("weibo+_reply", "GET {0} replies from page {1}".format(len(reply_list), page))
+        log.log("weibo_reply", "GET {0} replies from page {1}".format(len(reply_list), page))
         weibo_reply.extend(reply_list)
         if len(reply_list) == 0:
             break

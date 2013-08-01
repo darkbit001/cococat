@@ -27,7 +27,6 @@ class WeiboHttpRequest:
     def __init__(self, weibo_login):
         if self.__load_cookies() == False:
             log.log("http_request", "get cookies from weibo.com")
-        else:
             self.__cookies = weibo_login.get_cookie()
             if self.__cookies == None:
                 raise Exception("Unable to get cookie")
