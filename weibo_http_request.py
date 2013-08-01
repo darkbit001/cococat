@@ -7,6 +7,9 @@
 import urllib.request
 from io import BytesIO
 import gzip
+import json
+import os.path
+import log
 
 class WeiboHttpRequest:
     """
@@ -19,8 +22,50 @@ class WeiboHttpRequest:
         content = http_request.get(weibo_url)
     """
 
+    COOKIES_FILE = 'cookies.json'
+
     def __init__(self, weibo_login):
+        if self.__load_cookies() == False:
+            log.log("http_request", "get cookies from weibo.com")
         self.__cookies = weibo_login.get_cookie()
+        if self.__cookies == None:
+            raise Exception("Unable to get cookie")
+        self.__dump_cookies()
+
+    def __dump_cookies(self):
+        with open(self.COOKIES_FILE, 'w') as fp:
+            json.dump(self.__cookies, fp)
+
+    def __load_cookies(self):
+        """
+        Load cookies form local COOKIES_FILE and validate it
+        Return True if cookies is valid, vise versa
+        """
+
+        if os.path.exists(self.COOKIES_FILE) == True:
+            log.log("http_request", "load cookies from local file.")
+            try: 
+                with open(self.COOKIES_FILE) as fp:
+                    self.__cookies = json.load(fp)
+            except Exception as e:
+                log.log("http_request", str(e))
+                return False
+
+            if self.__check_cookie_vaildation() == True:
+                log.log("http_request", "cookies loaded.")
+                return True
+            else:
+                log.log("http_request", "local cookie is invalid.")
+
+        return False
+
+
+    def __check_cookie_vaildation(self):
+        content = self.get('http://www.weibo.com')
+        if content.find('nameBox') == -1:
+            return False
+        else:
+            return True
 
     def __build_header(self):
         header = dict()

@@ -16,5 +16,4 @@ def log(tag, text):
         log("http_request", "404 page not found")
     """
     datetime_str = datetime.datetime.now().strftime("%Y-%m-%d %H:%m:%S")
-    print("[{0}] {1}: {1}".format(datetime_str, tag, text))
-    
+    print("[{0}] {1}: {2}".format(datetime_str, tag, text))
