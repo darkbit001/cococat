@@ -6,20 +6,20 @@
 
 import re
 
-class Profile:
+class WeiboProfile:
 	"""
 	Get the weibo user profile from the web page
 
 	example:
 
 		Instantiate class profile, text is the input strings
-		p = profile(text)
+		p = WeiboProfile(text)
 
 		get the profile:
-		profilelist = p.getprofile()
+		profilelist = p.get_profile()
 
 		get the follow list:
-		followlist = p.getlist()
+		followlist = p.get_list()
 	"""
 	listall = []
 
@@ -85,7 +85,7 @@ class Profile:
 			self.membertype,
 			self.memberlevel)
 
-	def getprofile(self):
+	def get_profile(self):
 		self.setprofile()
 		profilelist = []
 		dict_temp = {}
@@ -116,7 +116,7 @@ class Profile:
 		self.membertype = refunc(restrlist['membertype'])
 		self.memberlevel = refunc(restrlist['memberlevel'])
 
-	def getlist(self):
+	def get_list(self):
 		'''
 		This function can get :	 
 			The list of users whom current user is following.
