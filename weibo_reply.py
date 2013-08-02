@@ -4,25 +4,14 @@
 # ling0322 2013-08-01
 #
 
+from weibo_struct import Reply
 import re
 import log
 import json
 import time
 import datetime
 
-class Reply:
-    def __init__(self, user_id, screen_name, text, reply_at):
-        self.user_id = user_id
-        self.screen_name = screen_name
-        self.text = text
-        self.reply_at = reply_at
 
-    def __repr__(self):
-        return 'Reply(user_id = {0}, screen_name = "{1}", text = "{2}", reply_at = "{3}")'.format(
-            self.user_id,
-            self.screen_name,
-            self.text,
-            self.reply_at)
 
 __REPLY_URL_BASE = 'http://www.weibo.com/aj/comment/big?id={0}&page={1}'
 __re_weibo_mid = re.compile(r'&mid=(\d+)&')
