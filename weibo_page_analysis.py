@@ -44,7 +44,7 @@ class WeiboPageAnalyzer:
                 break
             _entry = WeiboEntry(_weibo_tuple[2])
             #_entry.print()
-            self.__weibo_info_list.append(WeiboInfo(_entry))
+            self.__weibo_info_list.append(WeiboInfo(_entry).convert_to_message())
 
     def __extract_weibo_entry(self,beg):
         """
@@ -72,5 +72,6 @@ class WeiboPageAnalyzer:
 
     def print_weibo_info_list(self):
         for _elem in self.__weibo_info_list:
-            _elem.print()
+            #_elem.print()
+            log("weibo_page_analysis",_elem)
             log("","\n")

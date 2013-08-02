@@ -11,6 +11,7 @@
 import re
 import datetime
 from log import log
+import json
 
 class WeiboEntry:
     """
@@ -29,7 +30,7 @@ class WeiboEntry:
     def get_url(self):
         _pattern = re.compile(r'href=\\\"(?P<url>http:\\\/\\\/weibo\.com\\\/(?P<user_id>\d+)\\\/[\d\w]+)\\\" title')
         _match = _pattern.search(self.__content)
-        _url = _match.group('url')
+        _url = _match.group('url').replace('\/','/')
         _user_id = _match.group('user_id')
         return _url,_user_id
 
@@ -101,7 +102,15 @@ class WeiboEntry:
         #print()
         return _match.group('num')
 
+    def get_nick_name(self):
+        _pattern = re.compile(r'nick-name=\\\"(?P<nick_name>.*?)\\\"')
+        _match = _pattern.search(self.__content)
+        return _match.group('nick_name')
+
     def __filter_text(self,content):
+        """
+        filter html tag <...> from the weibo content text
+        """
         _pattern = re.compile(r"""<.*?>""")
         content = _pattern.sub('',content)
         return content
