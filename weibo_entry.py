@@ -9,6 +9,7 @@
 # -*- encoding:utf-8 -*-
 
 import re
+import datetime
 from log import log
 
 class WeiboEntry:
@@ -35,7 +36,10 @@ class WeiboEntry:
     def get_create_time(self):
         _pattern = re.compile(r'date=\\\"(?P<time>\d+)')
         _match = _pattern.search(self.__content)
-        _time = _match.group('time')
+        _timestamp = _match.group('time')
+
+        _zh_timezone = datetime.timezone(datetime.timedelta(hours = 8))
+        _time = datetime.datetime.fromtimestamp(int(_timestamp)/1000,_zh_timezone)
         return _time
 
     def get_text(self):
