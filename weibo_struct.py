@@ -28,6 +28,15 @@ class Message:
             self.reply_count,
             self.text)
 
+    def __str__(self):
+        return "@{0}: {2}; at {1}; Foward={3}; Reply={4}; mid={5}".format(
+            self.screen_name, 
+            self.create_time, 
+            self.text,
+            self.forward_count,
+            self.reply_count,
+            self.mid)
+
 class Reply:
     def __init__(self, user_id, screen_name, text, reply_at):
         self.user_id = user_id
