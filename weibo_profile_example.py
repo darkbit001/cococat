@@ -5,9 +5,14 @@
 #
 
 import sys
-from weibo_profile import profile
+
+from weibo_profile import Profile
 from weibo_login import WeiboLogin
 from weibo_http_request import WeiboHttpRequest
+
+
+if __name__ == "__main__":
+    main()
 
 def main():
 
@@ -15,7 +20,7 @@ def main():
 	password = 'f641679'
 	#url = 'http://weibo.com/u/'+sys.argv[1]
 	url = 'http://weibo.com/p/1005051697142574/follow'
-	print(url)
+	#print(url)
 	login = WeiboLogin(username, password)
 	http_request = WeiboHttpRequest(login)
 	text = http_request.get(url)
@@ -25,9 +30,13 @@ def main():
 	#with open('temple.txt', mode = 'w', encoding = 'utf-8') as a_file:
 	#	a_file.write(text)
 
-	p = profile(text)
+	# Instantiating class
+	p = Profile(text)
 
 	profilelist = p.getprofile()
+	
+	# insert an item into collection
+	# print all the document in collection	
 	for x in profilelist:
 		print(x)
 
@@ -35,8 +44,7 @@ def main():
 	#or http://weibo.com/nickname
 	#or http://weibo.com/u/uid
 	followlist = p.getlist()
+
 	for x in followlist:
 		print(x)
 
-if __name__ == "__main__":
-    main()
