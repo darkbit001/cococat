@@ -1,7 +1,7 @@
 import pymongo
 from pymongo import MongoClient
 
-class dboperator:
+class Dboperator:
 	'''
 	Link to database
 
@@ -13,24 +13,33 @@ class dboperator:
 		dbo.show()			 # print all the document in collection	
 
 	'''
-	def __init__(self):
+
+	collname = 'weibo' #The default collection is weibo
+	def __init__(self,collname):
+		self.collname = collname
 		self.connectdb()
 
-	def connectdb(self):		
+	def connectdb(self):
+		collname = self.collname		
 		self.client = MongoClient()
 		self.db = self.client.test
-		self.coll = self.db.weibo
+		self.coll = self.db[collname]
 
 	def insert(self,new_list):
 		#insert an item
 		#input:list
 		#output:Objectid
+		
 		mongoid = self.coll.insert(new_list)
-		print('成功插入:', new_list)
+		#print('成功插入:', new_list)
+		
 		return mongoid, new_list
 
+	def drop(self):
+		mongoid = self.coll.drop()
+		print(mongoid)
+
 	def show(self):
-		print('显示全部信息')
+		print('Show all documents in collection',self.collname,':')
 		for item in self.coll.find():
 			print (item)
-

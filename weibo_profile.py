@@ -6,7 +6,7 @@
 
 import re
 
-class profile:
+class Profile:
 	"""
 	Get the weibo user profile from the web page
 
@@ -88,13 +88,15 @@ class profile:
 	def getprofile(self):
 		self.setprofile()
 		profilelist = []
-		profilelist.append({'uid':self.userid})
-		profilelist.append({'nickname':self.nickname})
-		profilelist.append({'followernum':self.followernum})
-		profilelist.append({'followingnum':self.followingnum})
-		profilelist.append({'weibonum':self.weibonum})
-		profilelist.append({'membertype':self.membertype})
-		profilelist.append({'memberlevel':self.memberlevel})
+		dict_temp = {}
+		dict_temp['uid'] = self.userid
+		dict_temp['nickname'] = self.nickname
+		dict_temp['followernum'] = self.followernum
+		dict_temp['followingnum'] = self.followingnum
+		dict_temp['weibonum'] = self.weibonum
+		dict_temp['membertype'] = self.membertype
+		dict_temp['memberlevel'] = self.memberlevel
+		profilelist.append(dict_temp)
 		return profilelist
 
 	def setprofile(self):
