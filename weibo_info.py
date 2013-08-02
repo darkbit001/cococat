@@ -32,3 +32,24 @@ class WeiboInfo:
         log("reply_num",self.__reply_num)
         log("text",self.__text)
 
+    def get_mid(self):
+        return self.__mid
+
+    def get_url(self):
+        return self.__url
+
+    def get_user_id(self):
+        return self.__user_id
+
+    def get_create_time(self):
+        return self.__time
+
+    def get_text(self):
+        return self.__text
+
+    def get_forward_num(self):
+        return self.__forward_num
+
+    def get_reply_num(self):
+        return self.__reply_num
+

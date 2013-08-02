@@ -33,6 +33,7 @@ def search(http_request,input_term,page_limits):
         request_url = 'http://s.weibo.com/weibo/' + urllib.parse.quote(input_term) + '&pages=' + str(page)
         content = http_request.get(request_url)
 
+        #log('content',content)
         analyzer = WeiboPageAnalyzer(content)
         analyzer.analyze()
         #analyzer.print_weibo_info_list()

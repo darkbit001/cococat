@@ -43,6 +43,7 @@ class WeiboPageAnalyzer:
             if(-1 == _weibo_tuple[0]): 
                 break
             _entry = WeiboEntry(_weibo_tuple[2])
+            #_entry.print()
             self.__weibo_info_list.append(WeiboInfo(_entry))
 
     def __extract_weibo_entry(self,beg):
@@ -55,14 +56,15 @@ class WeiboPageAnalyzer:
             _weibo_entry: weibo entry content
         """
         _index_beg = self.__content.find('<dl class=\\\"feed_list\\\"',beg)
-        #print(_index_beg)
+        #log('index_beg:',_index_beg)
         if(-1 == _index_beg):
             #print("Not found this string!")
             return (-1,-1,"")
         _index_end = self.__content.find('<dl class=\\\"feed_list\\\"',_index_beg+1)
         _index_end = _index_end - 1
-        #print(_index_end)
+        #log('index_end',_index_end)
         _weibo_entry = self.__content[_index_beg:_index_end]
+        #log('weibo_entry',_weibo_entry)
         return (_index_beg,_index_end,_weibo_entry)
 
     def get_weibo_info_list(self):
