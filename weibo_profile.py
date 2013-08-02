@@ -33,16 +33,16 @@ class profile:
 	membertype = 'error'
 	memberlevel = 'error'
 
-	homerelist = {'uid': '\[\'oid\'\]=\'(\d+)\'',
-				'nickname': '\[\'onick\'\]=\'(.+)\'',
-				'followingnum': 'node-type="follow">(\d+)</strong>',
-				'followernum': 'node-type="fans">(\d+)</strong>',
-				'weibonum': 'node-type="weibo">(\d+)</strong>',
-				'membertype': 'class="W_ico16 (\w+)"',
-				'memberlevel': 'class="W_level_num l(\d+)"'}
+	homerelist = {'uid': r'\[\'oid\'\]=\'(\d+)\'',
+				'nickname': r'\[\'onick\'\]=\'(.+)\'',
+				'followingnum': r'node-type=\\\"follow\\\">(\d+)<\\/strong>',
+				'followernum': r'node-type=\\\"fans\\\">(\d+)<\\/strong>',
+				'weibonum': r'node-type=\\\"weibo\\\">(\d+)<\\/strong>',
+				'membertype': r'class=\\\"W_ico16 (\w+)\\\"',
+				'memberlevel': r'class=\\\"W_level_num l(\d+)\\\"'}
 
-	followrelist = {'uid_nickname_sex': 'action-type="itemClick" action-data="uid=(\d+)&amp;fnick=(.+)\&amp;sex=([fm])"',
-				'followurl_path': '通过<a href="(http:\/\/.+)" class="S_link2">(.+)<\/a>关注'
+	followrelist = {'uid_nickname_sex': r'action-type=\\\"itemClick\\\" action-data=\\\"uid=(\d+)&fnick=([^&]+)&sex=([fm])\\\"',
+				'followurl_path': r'通过<a href=\\\"(http:\\\/\\\/[^"]+)\\\" class=\\\"S_link2\\\" >([^<]+)<\\\/a>关注'
 				}
 
 	def __init__(self,text):
@@ -128,7 +128,7 @@ class profile:
 
 		list1 = findallfunc(followrelist['uid_nickname_sex'])
 		list2 = findallfunc(followrelist['followurl_path'])
-		#print(list1)
+		#print(list2)
 
 		'''
 		tuples to list
@@ -151,7 +151,7 @@ class profile:
 			dict_temp['uid'] = x[0]
 			dict_temp['nickname'] = x[1]
 			dict_temp['sex'] = x[2]
-			dict_temp['followpathurl'] = x[3]
+			dict_temp['followpathurl'] = x[3].replace('\\','')
 			dict_temp['followpath'] = x[4]
 			listall2.append(dict_temp)
 			#print(dict_temp)
