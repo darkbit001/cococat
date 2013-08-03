@@ -51,4 +51,47 @@ class Reply:
             self.text,
             self.reply_at)
 
+class User:
+    def __init__(self, user_id, screen_name, gender):
+        self.user_id = user_id
+        self.screen_name = screen_name
+        self.gender = gender
 
+    def __repr__(self):
+        return 'User(user_id = {0}, screen_name = "{1}", gender = "{2}")'.format(
+            self.user_id,
+            self.screen_name,
+            self.gender)    
+                        
+
+class User_Profile(User):
+    def __init__(self, user_id, screen_name, gender, follower_num, following_num, weibo_num, member_type, member_level):
+        super(User_Detail,self).__init__(user_id, screen_name, gender)
+        self.follower_num = follower_num
+        self.following_num = following_num
+        self.weibo_num = weibo_num
+        self.member_type = member_type
+        self.member_level = member_level
+    def __repr__(self):
+        return 'User_Profile(user_id = {0}, screen_name = "{1}", gender = "{2}", follower_num = "{3}", following_num = "{4}", weibo_num = "{5}", member_type = "{6}", member_level = "{7}")'.format(
+            self.user_id,
+            self.screen_name,
+            self.gender,
+            self.follower_num,
+            self.following_num,
+            self.weibo_num,
+            self.member_type,
+            self.member_level)
+
+class User_Fllow(User):
+    def __init__(self, user_id, screen_name, gender, follow_path, follow_path_url):
+        super(User_Fllow, self).__init__(user_id, screen_name, gender)
+        self.follow_path = follow_path
+        self.follow_path_url = follow_path_url
+    def __repr__(self):
+        return 'User_Fllow(user_id = {0}, screen_name = "{1}", gender = "{2}", follow_path = "{3}", follow_path_url = "{4}"'.format(
+            self.user_id,
+            self.screen_name,
+            self.gender,
+            self.follow_path,
+            self.follow_path_url)       

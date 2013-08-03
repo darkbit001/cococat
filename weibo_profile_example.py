@@ -6,20 +6,16 @@
 
 import sys
 
-from weibo_profile import WeiboProfile
+from weibo_profile import Profile
 from weibo_login import WeiboLogin
 from weibo_http_request import WeiboHttpRequest
-
-
-if __name__ == "__main__":
-    main()
 
 def main():
 
 	username = 'f641679@rmqkr.net'
 	password = 'f641679'
-	#url = 'http://weibo.com/u/'+sys.argv[1]
-	url = 'http://weibo.com/p/1005051697142574/follow'
+	url = 'http://weibo.com/u/'+sys.argv[1]
+	#url = 'http://weibo.com/p/1005051697142574/follow'
 	#print(url)
 	login = WeiboLogin(username, password)
 	http_request = WeiboHttpRequest(login)
@@ -27,13 +23,16 @@ def main():
 	
 	#Instantiate class profile
 	#text is the input strings
-	#with open('temple.txt', mode = 'w', encoding = 'utf-8') as a_file:
-	#	a_file.write(text)
+	'''
+	with open('profile_temple.txt', mode = 'w', encoding = 'utf-8') as a_file:
+		num = a_file.write(text)
+	print(num)
 
+	'''
 	# Instantiating class
-	p = WeiboProfile(text)
+	p = Profile(text)
 
-	profilelist = p.get_profile()()
+	profilelist = p.getprofile()
 	
 	# insert an item into collection
 	# print all the document in collection	
@@ -43,8 +42,11 @@ def main():
 	#This function is used in http://weibo.com/p/pageid
 	#or http://weibo.com/nickname
 	#or http://weibo.com/u/uid
-	followlist = p.get_list()()
+	followlist = p.getlist()
 
 	for x in followlist:
 		print(x)
 
+	
+if __name__ == "__main__":
+    main()

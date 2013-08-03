@@ -6,20 +6,20 @@
 
 import re
 
-class WeiboProfile:
+class Profile:
 	"""
 	Get the weibo user profile from the web page
 
 	example:
 
 		Instantiate class profile, text is the input strings
-		p = WeiboProfile(text)
+		p = profile(text)
 
 		get the profile:
-		profilelist = p.get_profile()
+		profilelist = p.getprofile()
 
 		get the follow list:
-		followlist = p.get_list()
+		followlist = p.getlist()
 	"""
 	listall = []
 
@@ -32,6 +32,7 @@ class WeiboProfile:
 	weibonum = 'error'
 	membertype = 'error'
 	memberlevel = 'error'
+	gender = 'error'
 
 	homerelist = {'uid': r'\[\'oid\'\]=\'(\d+)\'',
 				'nickname': r'\[\'onick\'\]=\'(.+)\'',
@@ -39,7 +40,8 @@ class WeiboProfile:
 				'followernum': r'node-type=\\\"fans\\\">(\d+)<\\/strong>',
 				'weibonum': r'node-type=\\\"weibo\\\">(\d+)<\\/strong>',
 				'membertype': r'class=\\\"W_ico16 (\w+)\\\"',
-				'memberlevel': r'class=\\\"W_level_num l(\d+)\\\"'}
+				'memberlevel': r'class=\\\"W_level_num l(\d+)\\\"',
+				'gender': r'class=\\\"W_ico12 (?:male|female)\\\" title=\\\"(.)\\\">'}
 
 	followrelist = {'uid_nickname_sex': r'action-type=\\\"itemClick\\\" action-data=\\\"uid=(\d+)&fnick=([^&]+)&sex=([fm])\\\"',
 				'followurl_path': r'通过<a href=\\\"(http:\\\/\\\/[^"]+)\\\" class=\\\"S_link2\\\" >([^<]+)<\\\/a>关注'
@@ -79,13 +81,14 @@ class WeiboProfile:
 		self.setprofile()
 		print(self.userid,
 			self.nickname,
+			self.gender,
 			self.followernum,
 			self.followingnum,
 			self.weibonum,
 			self.membertype,
 			self.memberlevel)
 
-	def get_profile(self):
+	def getprofile(self):
 		self.setprofile()
 		profilelist = []
 		dict_temp = {}
@@ -96,6 +99,7 @@ class WeiboProfile:
 		dict_temp['weibonum'] = self.weibonum
 		dict_temp['membertype'] = self.membertype
 		dict_temp['memberlevel'] = self.memberlevel
+		dict_temp['gender'] = self.gender
 		profilelist.append(dict_temp)
 		return profilelist
 
@@ -110,13 +114,14 @@ class WeiboProfile:
 		text = self.text
 		self.userid = refunc(restrlist['uid'])
 		self.nickname = refunc(restrlist['nickname'])
+		self.gender = refunc(restrlist['gender'])
 		self.followernum = refunc(restrlist['followernum'])
 		self.followingnum = refunc(restrlist['followingnum'])
 		self.weibonum = refunc(restrlist['weibonum'])
 		self.membertype = refunc(restrlist['membertype'])
 		self.memberlevel = refunc(restrlist['memberlevel'])
 
-	def get_list(self):
+	def getlist(self):
 		'''
 		This function can get :	 
 			The list of users whom current user is following.
