@@ -50,17 +50,19 @@ class WeiboHttpRequest:
             except Exception as e:
                 log.log("http_request", str(e))
                 return False
-
-            if self.__check_cookie_vaildation() == True:
-                log.log("http_request", "cookies loaded.")
-                return True
-            else:
+            try:
+                if self.__check_cookie_validation() == True:
+                    log.log("http_request", "cookies loaded.")
+                    return True
+                else:
+                    log.log("http_request", "local cookie is invalid.")
+            except:
                 log.log("http_request", "local cookie is invalid.")
 
         return False
 
 
-    def __check_cookie_vaildation(self):
+    def __check_cookie_validation(self):
         content = self.get('http://www.weibo.com')
         if content.find('nameBox') == -1:
             return False
@@ -100,7 +102,7 @@ class WeiboHttpRequest:
             f = gzip.GzipFile(fileobj = buf)
             content = f.read()
             log.log("http_request", "unzip {0} -> {1}".format(content_len, len(content)))
-
+        
         return content.decode('utf-8')
 
     def post(self, url, data):
