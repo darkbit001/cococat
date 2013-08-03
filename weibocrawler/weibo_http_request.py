@@ -9,7 +9,7 @@ from io import BytesIO
 import gzip
 import json
 import os.path
-import log
+from weibocrawler import log
 
 class WeiboHttpRequest:
     """

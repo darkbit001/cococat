@@ -11,11 +11,11 @@
 #! /usr/bin/python3
 #! -*- encoding:utf-8 -*-
 
-from weibo_http_request import WeiboHttpRequest
-from weibo_login import WeiboLogin
-from weibo_page_analysis import WeiboPageAnalyzer
-from weibo_info import WeiboInfo
-from log import log
+from weibocrawler.weibo_http_request import WeiboHttpRequest
+from weibocrawler.weibo_login import WeiboLogin
+from weibocrawler.weibo_page_analysis import WeiboPageAnalyzer
+from weibocrawler.weibo_info import WeiboInfo
+from weibocrawler.log import log
 import urllib.parse 
 
 def search(http_request, input_term, max_num):

@@ -6,9 +6,9 @@
 
 import sys
 
-from weibo_profile import Profile
-from weibo_login import WeiboLogin
-from weibo_http_request import WeiboHttpRequest
+from weibocrawler import WeiboProfile
+from weibocrawler import WeiboLogin
+from weibocrawler import WeiboHttpRequest
 
 def main():
 
@@ -30,9 +30,9 @@ def main():
 
 	'''
 	# Instantiating class
-	p = Profile(text)
+	p = WeiboProfile(text)
 
-	profilelist = p.getprofile()
+	profilelist = p.get_profile()
 	
 	# insert an item into collection
 	# print all the document in collection	
@@ -42,7 +42,7 @@ def main():
 	#This function is used in http://weibo.com/p/pageid
 	#or http://weibo.com/nickname
 	#or http://weibo.com/u/uid
-	followlist = p.getlist()
+	followlist = p.get_list(flag = True)
 
 	for x in followlist:
 		print(x)

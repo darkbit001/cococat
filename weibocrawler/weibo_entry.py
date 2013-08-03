@@ -10,7 +10,7 @@
 
 import re
 import datetime
-from log import log
+from weibocrawler.log import log
 import json
 
 class WeiboEntry:

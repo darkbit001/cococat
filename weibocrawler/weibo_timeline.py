@@ -4,9 +4,9 @@
 # ling0322 2013-08-02
 #
 
-from weibo_struct import Message
+from weibocrawler.weibo_struct import Message
 import re
-import log
+from weibocrawler import log
 import json
 import datetime
 
@@ -65,7 +65,7 @@ def get_weibo_user_timeline(http_request, user_id, max_count = 1000):
         raise Exception("Unable to get user's page_id")
 
     page_id = match.group(1)
-    log.log("weibo_timeline", "user's page_id is : " + page_id)
+    log("weibo_timeline", "user's page_id is : " + page_id)
 
     # Get screen_name from user's homepage
 
@@ -74,7 +74,7 @@ def get_weibo_user_timeline(http_request, user_id, max_count = 1000):
         raise Exception("Unable to get user's screen_name")
 
     screen_name = match.group(1)
-    log.log("weibo_timeline", "user's screen_name is : " + screen_name) 
+    log("weibo_timeline", "user's screen_name is : " + screen_name) 
 
     message_list = []
     for page in range(1, 100):

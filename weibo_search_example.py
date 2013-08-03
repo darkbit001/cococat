@@ -8,10 +8,10 @@
 # -*- encoding:utf-8 -*-
 
 import sys
-from weibo_search import search
-from weibo_login import WeiboLogin
-from weibo_http_request import WeiboHttpRequest
-from log import log
+from weibocrawler import search
+from weibocrawler import WeiboLogin
+from weibocrawler import WeiboHttpRequest
+from weibocrawler import log
 
 def print_weibo_info_list(input_list):
     for elem in input_list:

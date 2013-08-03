@@ -8,9 +8,9 @@
 # -*- encoding:utf-8 -*-
 
 import re,sys
-from weibo_entry import WeiboEntry 
-from weibo_info import WeiboInfo
-from log import log
+from weibocrawler.weibo_entry import WeiboEntry 
+from weibocrawler.weibo_info import WeiboInfo
+from weibocrawler.log import log
 
 class WeiboPageAnalyzer:
     """

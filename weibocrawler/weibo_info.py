@@ -7,9 +7,9 @@
 #! /usr/bin/python3
 # -*- encoding:utf-8 -*-
 
-from weibo_entry import WeiboEntry
-from weibo_struct import Message
-from log import log
+from weibocrawler.weibo_entry import WeiboEntry
+from weibocrawler.weibo_struct import Message
+from weibocrawler.log import log
 
 class WeiboInfo:
     """

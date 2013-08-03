@@ -8,10 +8,10 @@
 # -*- encoding:utf-8 -*-
 
 import sys
-from weibo_login import WeiboLogin
-from weibo_http_request import WeiboHttpRequest
-from weibo_follow import get_follow_list
-from log import log
+from weibocrawler import WeiboLogin
+from weibocrawler import WeiboHttpRequest
+from weibocrawler import get_follow_list
+from weibocrawler import log
 
 
 def main():

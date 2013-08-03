@@ -5,10 +5,10 @@
 #
 
 import re
-from weibo_struct import User
-from weibo_struct import UserProfile
-from weibo_struct import Follower
-from weibo_struct import Following
+from weibocrawler.weibo_struct import User
+from weibocrawler.weibo_struct import UserProfile
+from weibocrawler.weibo_struct import Follower
+from weibocrawler.weibo_struct import Following
 
 class WeiboProfile:
     """
@@ -93,7 +93,7 @@ class WeiboProfile:
             self.memberlevel)
 
     def get_profile(self):
-        self.setprofile()
+        self.set_profile()
         profilelist = []
         dict_temp = {}
         dict_temp['uid'] = self.userid

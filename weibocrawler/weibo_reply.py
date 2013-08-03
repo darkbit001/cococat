@@ -4,9 +4,9 @@
 # ling0322 2013-08-01
 #
 
-from weibo_struct import Reply
+from weibocrawler.weibo_struct import Reply
 import re
-import log
+from weibocrawler.log import log
 import json
 import time
 import datetime
@@ -140,7 +140,7 @@ def __get_reply_at_page(http_request, mid, page):
         reply_at_parsed = __calculate_reply_time(reply_at)
 
         reply = Reply(user_id, screen_name, text, reply_at_parsed)
-        # log.log("weibo_reply", reply)
+        # log("weibo_reply", reply)
         reply_list.append(reply)
 
     return reply_list
@@ -163,7 +163,7 @@ def get_weibo_reply(http_request, weibo_url, reply_max = 200):
     weibo_reply = []
     for page in range(1, 100):
         reply_list = __get_reply_at_page(http_request, mid, page)
-        log.log("weibo_reply", "GET {0} replies from page {1}".format(len(reply_list), page))
+        log("weibo_reply", "GET {0} replies from page {1}".format(len(reply_list), page))
         weibo_reply.extend(reply_list)
         count += len(reply_list)
         if len(reply_list) == 0 or count >= reply_max:

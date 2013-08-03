@@ -8,8 +8,8 @@
 # -*-encoding:utf-8 -*-
 
 import re,sys,time
-from weibo_profile import WeiboProfile
-from log import log
+from weibocrawler.weibo_profile import WeiboProfile
+from weibocrawler import log
 
 def get_max_page_num(content):
 
