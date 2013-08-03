@@ -69,7 +69,7 @@ class WeiboHttpRequest:
         else:
             return True
 
-    def __build_header(self):
+    def __build_header(self, enable_cookie):
         header = dict()
         header['Accept'] = 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
         header['Accept-Encoding'] = 'gzip,deflate,sdch'
@@ -77,18 +77,19 @@ class WeiboHttpRequest:
         header['Connection'] = 'keep-alive'
         header['DNT'] = '1'
         header['User-Agent'] = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.71 Safari/537.36'
-        header['Cookie'] = '; '.join(map(lambda t: '{0}={1}'.format(t[0], t[1]), self.__cookies.items()))
+        if enable_cookie == True
+            header['Cookie'] = '; '.join(map(lambda t: '{0}={1}'.format(t[0], t[1]), self.__cookies.items()))
 
         return header
 
-    def get(self, url):
+    def get(self, url, enable_cookie = True):
         """
         A GET request to the url and returns the content of that url in str type
         """
 
         log.log("http_request", "GET {0}".format(url))
 
-        request = urllib.request.Request(url = url, headers = self.__build_header())
+        request = urllib.request.Request(url = url, headers = self.__build_header(enable_cookie))
         fp = urllib.request.urlopen(request)
         http_message = fp.info()
         content = fp.read()
