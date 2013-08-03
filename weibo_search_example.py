@@ -11,11 +11,12 @@ import sys
 from weibo_search import search
 from weibo_login import WeiboLogin
 from weibo_http_request import WeiboHttpRequest
+from log import log
 
 def print_weibo_info_list(input_list):
     for elem in input_list:
-        elem.print()
-        print()
+        log("",elem)
+        log("",'\n')
 
 def main():
     """Usage: python3 ./weibo_search_example.py [search_term]"""
