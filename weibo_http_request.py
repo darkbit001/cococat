@@ -77,7 +77,7 @@ class WeiboHttpRequest:
         header['Connection'] = 'keep-alive'
         header['DNT'] = '1'
         header['User-Agent'] = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.71 Safari/537.36'
-        if enable_cookie == True
+        if enable_cookie == True:
             header['Cookie'] = '; '.join(map(lambda t: '{0}={1}'.format(t[0], t[1]), self.__cookies.items()))
 
         return header
