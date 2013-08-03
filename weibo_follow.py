@@ -82,7 +82,7 @@ def get_follow_list(http_request, user_id, flag = False):
         _content = get_content_from_pageid(http_request, _page_id, i, flag)
         _profile = WeiboProfile(_content)
 
-        _temp_list = _profile.get_list()
+        _temp_list = _profile.get_list(flag)
         #log('length of temp list',len(_temp_list))
         _follow_list = _follow_list + _temp_list
         i = i + 1

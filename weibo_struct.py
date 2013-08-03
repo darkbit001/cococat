@@ -64,7 +64,7 @@ class User:
             self.gender)    
                         
 
-class User_Profile(User):
+class UserProfile(User):
     def __init__(self, user_id, screen_name, gender, follower_num, following_num, weibo_num, member_type, member_level):
         super(User_Detail,self).__init__(user_id, screen_name, gender)
         self.follower_num = follower_num
@@ -73,7 +73,7 @@ class User_Profile(User):
         self.member_type = member_type
         self.member_level = member_level
     def __repr__(self):
-        return 'User_Profile(user_id = {0}, screen_name = "{1}", gender = "{2}", follower_num = "{3}", following_num = "{4}", weibo_num = "{5}", member_type = "{6}", member_level = "{7}")'.format(
+        return 'UserProfile(user_id = {0}, screen_name = "{1}", gender = "{2}", follower_num = "{3}", following_num = "{4}", weibo_num = "{5}", member_type = "{6}", member_level = "{7}")'.format(
             self.user_id,
             self.screen_name,
             self.gender,
@@ -83,15 +83,35 @@ class User_Profile(User):
             self.member_type,
             self.member_level)
 
-class User_Fllow(User):
-    def __init__(self, user_id, screen_name, gender, follow_path, follow_path_url):
-        super(User_Fllow, self).__init__(user_id, screen_name, gender)
+class Follower(User):
+    def __init__(self, user_id, screen_name, gender, follow_path, follow_path_url, following_user_id):
+        super(Follower, self).__init__(user_id, screen_name, gender)
         self.follow_path = follow_path
         self.follow_path_url = follow_path_url
+        self.following_user_id = following_user_id
     def __repr__(self):
-        return 'User_Fllow(user_id = {0}, screen_name = "{1}", gender = "{2}", follow_path = "{3}", follow_path_url = "{4}"'.format(
+        return 'Follower(user_id = {0}, screen_name = "{1}", gender = "{2}", follow_path = "{3}", follow_path_url = "{4}", following_user_id = "{5}"'.format(
             self.user_id,
             self.screen_name,
             self.gender,
             self.follow_path,
-            self.follow_path_url)       
+            self.follow_path_url,
+            self.following_user_id)
+
+class Following(User):
+    def __init__(self, user_id, screen_name, gender, follow_path, follow_path_url, follower_user_id):
+        super(Following, self).__init__(user_id, screen_name, gender)
+        self.follow_path = follow_path
+        self.follow_path_url = follow_path_url
+        self.follower_user_id = follower_user_id
+
+    def __repr__(self):
+        return 'Following(user_id = {0}, screen_name = "{1}", gender = "{2}", follow_path = "{3}", follow_path_url = "{4}", follower_user_id = "{5}"'.format(
+            self.user_id,
+            self.screen_name,
+            self.gender,
+            self.follow_path,
+            self.follow_path_url,
+            self.follower_user_id)
+
+
