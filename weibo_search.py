@@ -21,9 +21,9 @@ def search(http_request,input_term,page_limits):
 
     Usage:
 
-    login = WeiboLogin('f641679@rmqkr.net','f641679')
+    login = WeiboLogin('f641679@rmqkr.net', 'f641679')
     http_request = WeiboHttpRequest(login)
-    weibo_info_list = search(http_request,'天一',10)
+    weibo_info_list = search(http_request, '天一', 10)
 
     """
     page = 1
@@ -31,7 +31,7 @@ def search(http_request,input_term,page_limits):
 
     while page <= page_limits:
         request_url = 'http://s.weibo.com/weibo/' + urllib.parse.quote(input_term) + '&pages=' + str(page)
-        content = http_request.get(request_url)
+        content = http_request.get(request_url, enable_cookie = False)
 
         #log('content',content)
         analyzer = WeiboPageAnalyzer(content)
