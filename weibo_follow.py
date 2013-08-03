@@ -18,6 +18,9 @@ def get_max_page_num(content):
     log('page_list',_page_list)
     _page_list = [ int(x) for x in _page_list ]
 
+    if not _page_list:
+        return 1
+
     return max(_page_list)
 
 
@@ -39,13 +42,14 @@ def get_content_from_pageid(http_request, page_id, page_num, flag = False):
 
     _url = 'http://weibo.com/p/' + str(page_id)                             \
            +'/follow?pids=Pl_Official_LeftHisRelation__15&'                 \
-           + (flag and ['relate=fans&'] or [''])[0] + 'page='            \
+           + (flag and ['relate=fans&'] or [''])[0] + 'page='               \
            + str(page_num) + '#place'
 
     log('url',_url)
     _content = http_request.get(_url)
 
     return _content 
+
 
 def get_follow_list(http_request, user_id, flag = False):
     """
@@ -83,7 +87,7 @@ def get_follow_list(http_request, user_id, flag = False):
         _profile = WeiboProfile(_content)
 
         _temp_list = _profile.get_list(flag)
-        #log('length of temp list',len(_temp_list))
+        log('length of temp list',len(_temp_list))
         _follow_list = _follow_list + _temp_list
         i = i + 1
 

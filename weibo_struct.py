@@ -90,7 +90,7 @@ class Follower(User):
         self.follow_path_url = follow_path_url
         self.following_user_id = following_user_id
     def __repr__(self):
-        return 'Follower(user_id = {0}, screen_name = "{1}", gender = "{2}", follow_path = "{3}", follow_path_url = "{4}", following_user_id = "{5}"'.format(
+        return 'Follower(user_id = {0}, screen_name = "{1}", gender = "{2}", follow_path = "{3}", follow_path_url = "{4}", following_user_id = "{5}")'.format(                              # modified by RobotFlying at 2013-08-03
             self.user_id,
             self.screen_name,
             self.gender,
@@ -106,7 +106,7 @@ class Following(User):
         self.follower_user_id = follower_user_id
 
     def __repr__(self):
-        return 'Following(user_id = {0}, screen_name = "{1}", gender = "{2}", follow_path = "{3}", follow_path_url = "{4}", follower_user_id = "{5}"'.format(
+        return 'Following(user_id = {0}, screen_name = "{1}", gender = "{2}", follow_path = "{3}", follow_path_url = "{4}", follower_user_id = "{5}")'.format(                              # modified by RobotFlying at 2013-08-03
             self.user_id,
             self.screen_name,
             self.gender,
