@@ -1,7 +1,7 @@
 #
 #  weibo_entry.py
 #
-#  RobotFlying 2013-08-01
+#  BurnedRobot 2013-08-01
 #
 
 

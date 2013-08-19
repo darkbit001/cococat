@@ -1,7 +1,7 @@
 #
 # weibo_follow_example.py
 #
-# RobotFlying 2013-08-02
+# BurnedRobot 2013-08-02
 #
 
 #! /usr/bin/python3

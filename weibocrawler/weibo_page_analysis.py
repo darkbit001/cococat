@@ -1,7 +1,7 @@
 #
 # weibo_page_analysis.py
 #
-# RobotFlying 2013-07-31
+# BurnedRobot 2013-07-31
 #
 
 #! /usr/bin/python3

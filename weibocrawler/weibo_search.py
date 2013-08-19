@@ -1,9 +1,9 @@
 #
 # weibo_search.py
 #
-# RobotFlying 2013-08-01
+# BurnedRobot 2013-08-01
 #
-#       Modified by RobotFlying at 2013-08-03: 
+#       Modified by BurnedRobot at 2013-08-03: 
 #       search(http_request, input_term, page_limits) ===> search(http_request, input_term, max_num)
 #
 #
