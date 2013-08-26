@@ -11,6 +11,7 @@ import rsa
 import re
 import json
 import binascii
+from weibocrawler import log
 
 
 class WeiboLogin:
@@ -105,7 +106,7 @@ class WeiboLogin:
             encryptd_username = self.__encrypt_username(self.__username)
             encrypted_password = self.__encrypt_password(self.__password, server_time, nonce)
             form_data = self.__build_login_form_data(encryptd_username, encrypted_password, server_time, nonce)
-            
+
             request  = urllib.request.Request(url = self.LOGIN_URL, data = urlencode(form_data).encode('utf-8'))
             fp = urllib.request.urlopen(request)
             content = fp.read()
@@ -114,6 +115,7 @@ class WeiboLogin:
             content = content.decode('gbk')
             match = re.search('location\.replace\(\"(.*?)\"\)', content)
             callback_url = match.group(1)
+            log.log("weibo_login", callback_url)
 
             fp = urllib.request.urlopen(callback_url)
             content = fp.read()
@@ -122,7 +124,7 @@ class WeiboLogin:
 
             if 'SUE' in cookie_dict and cookie_dict['SUE'] != 'deleted':
                 return cookie_dict
-        except e:
+        except Exception as e:
             print(e)
 
         return None
