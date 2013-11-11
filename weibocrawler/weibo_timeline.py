@@ -47,12 +47,13 @@ def get_timeline_page(http_request, page_id, page):
 
     mid_list = __re_mid.findall(page_html)
     mid_list = list(map(lambda x: int(x), mid_list))
-
-    count = len(text_list) + len(forward_list) + len(reply_list) + len(create_at_list) + len(mid_list)
-    if len(text_list) * 5 != count:
+    
+    #print(len(text_list), len(forward_list), len(reply_list), len(create_at_list), len(mid_list))
+    count = len(text_list) + len(create_at_list) + len(mid_list)
+    if len(text_list) * 3 != count:
         raise Exception('Extract timeline message error')
 
-    return text_list, forward_list, reply_list, create_at_list, mid_list
+    return text_list, create_at_list, mid_list
 
 
 def get_weibo_user_timeline(http_request, user_id, max_count = 1000):
@@ -78,7 +79,7 @@ def get_weibo_user_timeline(http_request, user_id, max_count = 1000):
 
     message_list = []
     for page in range(1, 100):
-        text_list, forward_list, reply_list, create_at_list, mid_list = get_timeline_page(http_request, page_id, page)
+        text_list, create_at_list, mid_list = get_timeline_page(http_request, page_id, page)
         for i in range(len(text_list)):
             message = Message(
                 user_id = user_id,
@@ -86,8 +87,8 @@ def get_weibo_user_timeline(http_request, user_id, max_count = 1000):
                 create_time = create_at_list[i],
                 url = "",
                 mid = mid_list[i],
-                forward_count = forward_list[i],
-                reply_count = reply_list[i],
+                forward_count = 0,
+                reply_count = 0,
                 text = text_list[i])
             message_list.append(message)
 

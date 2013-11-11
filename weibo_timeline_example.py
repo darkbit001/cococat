@@ -7,6 +7,6 @@ if __name__ == '__main__':
 
     login = weibocrawler.WeiboLogin(username, password)
     http_request = weibocrawler.WeiboHttpRequest(login)
-    messages = weibocrawler.get_weibo_user_timeline(http_request, '1197161814', 100)
+    messages = weibocrawler.get_weibo_user_timeline(http_request, '1987411731', 100)
     for message in messages:
     	weibocrawler.log("weibo_timeline_example", message)
