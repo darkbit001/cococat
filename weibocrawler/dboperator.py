@@ -1,3 +1,9 @@
+#
+# dboperator.py
+#
+# Author: doufunao
+#
+#
 import pymongo
 from pymongo import MongoClient
 
@@ -33,7 +39,7 @@ class Dboperator:
 		mongoid = self.coll.insert(new_list)
 		#print('成功插入:', new_list)
 		
-		return mongoid, new_list
+		return mongoid
 
 	def drop(self):
 		mongoid = self.coll.drop()

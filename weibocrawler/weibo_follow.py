@@ -10,6 +10,8 @@
 import re,sys,time
 from weibocrawler.weibo_profile import WeiboProfile
 from weibocrawler import log
+import time
+import random
 
 def get_max_page_num(content):
 
@@ -28,12 +30,16 @@ def get_page_id(http_request, user_id):
 
     _url = 'http://weibo.com/u/' + str(user_id)
     log('url',_url)
+    sleeptime = random.randint(2,5)
+    log('get_page_id sleeptime', sleeptime)
+    time.sleep(sleeptime)
     _content = http_request.get(_url)
 
     _pattern = re.compile(r'\\\/p\\\/(?P<page_id>\d*)')
     _match = _pattern.search(_content)
     _page_id = _match.group('page_id')
     log('page_id',_page_id)
+
 
     return _page_id 
 
@@ -46,6 +52,9 @@ def get_content_from_pageid(http_request, page_id, page_num, flag = False):
            + str(page_num) + '#place'
 
     log('url',_url)
+    sleeptime = random.randint(2,5)
+    log('get_page_id sleeptime', sleeptime)
+    time.sleep(sleeptime)
     _content = http_request.get(_url)
 
     return _content 

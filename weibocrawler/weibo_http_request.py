@@ -10,6 +10,9 @@ import gzip
 import json
 import os.path
 from weibocrawler import log
+import webbrowser
+import time
+import os
 
 class WeiboHttpRequest:
     """
@@ -76,7 +79,8 @@ class WeiboHttpRequest:
         header['Accept-Language'] = 'en-US,en;q=0.8'
         header['Connection'] = 'keep-alive'
         header['DNT'] = '1'
-        header['User-Agent'] = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.71 Safari/537.36'
+        #header['User-Agent'] = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.71 Safari/537.36'
+        header['User-Agent'] = 'Mozilla/12.0 (compatible; MSIE 8.0; Windows NT)'
         if enable_cookie == True:
             header['Cookie'] = '; '.join(map(lambda t: '{0}={1}'.format(t[0], t[1]), self.__cookies.items()))
 
@@ -96,6 +100,12 @@ class WeiboHttpRequest:
         fp.close()
         
         content_len = len(content)
+        '''
+        if content_len < 3000:
+            print(content_len)
+            webbrowser.open_new_tab(url)
+            return ""
+        '''
         log.log("http_request", "GET {0} ... OK {1} Bytes".format(url, content_len))
 
         if http_message.get('Content-Encoding') == 'gzip':
@@ -103,8 +113,10 @@ class WeiboHttpRequest:
             f = gzip.GzipFile(fileobj = buf)
             content = f.read()
             log.log("http_request", "unzip {0} -> {1}".format(content_len, len(content)))
-        
-        return content.decode('utf-8')
+            log.log('This py program\'s pwd', os.getcwd())
+            #f = open('bodycache.txt','w')
+            #f.write(content.decode('utf-8'))
+        return content.decode('utf-8','ignore')
 
     def post(self, url, data):
         """
