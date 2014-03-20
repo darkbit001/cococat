@@ -1,0 +1,140 @@
+<div class="PRF_profile_header">
+<!-- 封面图 -->
+<!--cover图, 勋章-->
+    <div class="S_profile_pic profile_pic_top" node-type="cover"  style="background-image:url(http://img.t.sinajs.cn/t5/skin/public/profile_cover/001.jpg)" " cover-type="1">
+	<div class="pf_use_num " node-type="use_num">超过<span class="W_Tahoma W_fb">2000</span>万人正在使用</div>			<a href="javascript:void(0);" suda-uatrack="key=tblog_profile_new&value=icon_copycover" class="pf_copy_icon" action-data="copy=1&owner_uid=3514412273&type=system&cover_id=1" action-type="copy_cover" title="我也要用"></a>
+			
+   <!--flash 动画-->
+		<div class="W_animation_cover"  node-type="flash_cover">
+					  		<div id="flash_cover"></div>
+		    		</div>
+   <!--/flash 动画--> 
+      
+    
+		<div class="pf_badge_icon clearfix">
+							<div class="pf_badge S_line1" node-type="medal">
+					<ul class="clearfix badge_list">
+			            			            <li><a title="谈笑风生" href="http://badge.weibo.com/3514412273?mid=8&source=7"><img medalcard="id=3514412273&mid=8" src="http://img.t.sinajs.cn/t4/style/images/medal/8_s.gif?version=" width="24" height="24" title="谈笑风生" alt="谈笑风生" /></a></li>
+			            					 </ul>
+				</div>
+			    </div>
+    </div>
+<div class="profile_top S_bg5">
+	<div class="pf_info clearfix">
+		<div class="pf_info_left">
+			<!--个人基本信息-->
+			<div>
+								<div class="pf_name bsp clearfix">
+	<span class="name">暖笑伤怀自己去敲...</span>
+	<div class="pf_icon clearfix">
+																							<div class="icon_bed" node-type="level"><a action-type="" suda-data="key=tblog_grade_float&value=grade_icon_click" target="_blank" href="http://level.account.weibo.com/u/?id=3514412273" ><span class="W_level_ico color2"><span title="Current Level:5" levelcard="id=3514412273" class="W_level_num l5"></span></span></a></div>
+						<div class="icon_bed"><a href="/cerulean9114?from=profile&wvr=5&loc=infdomain" class="pf_lin S_link1">http://weibo.com/cerulean9114</a></div>
+	</div>
+</div>
+			
+<div class="pf_intro bsp">
+			<span class="S_txt2" title="我那么努力，不过是为了做一个普通人。">
+			我那么努力，不过是为了做一个普通人。		</span>
+	</div>
+<div class="pf_tags bsp" node-type="info" style="position:relative">
+	                               
+	<div class="layer_menulist_tags S_line3 S_bg5" node-type="infoTag" style="position:absolute; top:29px; left:-1px; z-index:99;display:none;">
+		<ul>
+			<li class="tit"><span class="S_txt2">Tags:</span></li>
+							<li><a href="/find/f?type=1&search=1&tag1=%E6%98%9F%E5%BA%A7%E5%91%BD%E7%90%86&from=profile&wvr=5&loc=inftag" class="W_btn_arrow tag"><span class="S_func1">星座命理</span></a></li>
+					</ul>
+	</div>
+		                
+	<div class="tags">
+				<a href="/find/f?type=1&search=1&sex=f&tag1=Scorpio&prov=37&from=profile&wvr=5&loc=infgender"><em class="W_ico12 female" title="Female"></em></a>
+										<span class="W_vline S_line1_c">|</span><a href="/find/f?type=1&search=1&sex=f&tag1=Scorpio&prov=37&from=profile&wvr=5&loc=infsign">Scorpio</a>
+								<span class="W_vline S_line1_c">|</span><em class="S_txt2"><a href="/find/f?type=1&search=1&sex=f&tag1=Scorpio&prov=37&from=profile&wvr=5&loc=infplace" title="山东 青岛">山东 青岛</a></em>
+										<span class="W_vline S_line1_c">|</span>
+				<a href="javascript:void(0)" node-type="infoSlide" >Tags<span class="W_arrow"><em node-type="infoSlideIcon">◆</em></span></a>
+							</div>
+</div>
+		<div class="pf_do clearfix" diss-data="wforce=1&refer_sort=profile&refer_flag=profile_head">
+					<div class="btn_bed" node-type="focusLink">
+				<a suda-data="key=tblog_attention_click&value=3514412273" class="W_btn_b" title="Follow" action-type="follow" action-data="uid=3514412273&fnick=暖笑伤怀自己去敲幸福门" href="javascript:void(0);">
+					<span><em class="addicon">+</em>Follow</span>
+				</a>
+			</div>
+					
+		<div class="btn_bed" node-type="catBtn" style="">
+			<a href="javascript:;"  class="W_btn_c">
+				<span action-type="webim.conversation" action-data="uid=3514412273&nick=暖笑伤怀自己去敲幸福门">
+					<i class="W_chat_stat W_chat_stat_offline"></i>Message				</span>
+			</a>
+		</div>
+			
+				<div node-type="hover" class="btn_bed btn_links" style="display:none;">
+					<span node-type="do_btns">
+				<a action-type="widget_publish" action-data="title=Recommend%20%E6%9A%96%E7%AC%91%E4%BC%A4%E6%80%80%E8%87%AA%E5%B7%B1%E5%8E%BB%E6%95%B2%E5%B9%B8%E7%A6%8F%E9%97%A8%20to%20a%20friend%20&content=Come%20to%20take%20a%20look%20%40%E6%9A%96%E7%AC%91%E4%BC%A4%E6%80%80%E8%87%AA%E5%B7%B1%E5%8E%BB%E6%95%B2%E5%B9%B8%E7%A6%8F%E9%97%A8%20http://weibo.com/cerulean9114" suda-data="key=tblog_otherprofile_v5&value=recommend_friends" href="javascript:void(0);" class="rec_friend" action-type="recommend">
+Recommend to friends</a><span class="W_vline S_line1_c">|</span>
+				<a suda-data="key=tblog_otherprofile_v5&value=join_blacklist" href="javascript:void(0);" class="black_list" action-type="block">Add to blacklist</a><span class="W_vline S_line1_c">|</span>
+			</span>
+			<a href="javascript:;" class="S_link1" node-type="more">More<span class="W_arrow"><em class="down">◆</em></span></a>
+			<div node-type="moreList" class="layer_menu_list handle_menu" style="display:none; position:absolute; z-index:99;">
+				<ul>
+					<li>	<a suda-data="key=tblog_otherprofile_v5&value=whisper" href="javascript:void(0);" class="watch" action-type="addQuietFollow" action-data="fuid=3514412273&fname=暖笑伤怀自己去敲幸福门&action=add">Secret following</a>
+			<div class="W_layer layer_tips layer_tips_version layer_tips_intro layer_tips_wid2" style="position: absolute; display: none; " node-type="quiet_pop"> 
+			<div class="layer_tips_bg"> 
+				<dl> 
+				<dt>Secret following ：</dt> 
+				<dd><span class="W_textdot_b"></span>Will not receive new follower reminders</dd> 
+				<dd><span class="W_textdot_b"></span>Your follower list won't show  </dd> 
+				<dd><span class="W_textdot_b"></span>When others look at your follower list, it won't show </dd> 
+				<dd class="btn"><a class="W_btn_tip" href="javascript:void(0);" node-type="quiet_know"><span>Got it</span></a></dd> 
+				</dl> 
+				<span class="arrow_left"></span> 
+			</div> 
+		</div>
+	</li>
+					<li><a class="del_fans" suda-data="key=tblog_otherprofile_v5&value=report" href="javascript:void(0);" onclick="javascript:window.open('http://service.account.weibo.com/reportspam?rid=3514412273&from=10106&type=3&url=%2Fp%2F1005053514412273&bottomnav=1&wvr=5', 'newwindow', 'height=700, width=550, toolbar =yes, menubar=no, scrollbars=yes, resizable=yes, location=no, status=no');">Report</a></li>
+					<li><a class="del_fans" href="http://service.account.weibo.com" target="_blank">Report</a></li>
+	        	</ul>
+        	</div>
+    		
+        </div>
+    			</div>
+	
+							</div>
+		</div>
+		<div class="pf_info_right">
+			<!--扩展信息，认证、勋章、会员等-->
+			<div>
+				
+
+			</div>
+		</div>
+	</div>
+	<div class="pf_head S_bg4 S_line1">
+		<!--头像及计数器-->
+		<div>
+			<div class="pf_head_pic"  >
+	<img src="http://tp2.sinaimg.cn/3514412273/180/40046219100/0" alt="暖笑伤怀自己去敲幸福门" />
+	</div>
+<ul class="user_atten clearfix user_atten_l">
+	<li class='S_line1'>
+		<a class="S_func1" href="/p/1005053514412273/follow?from=page_100505&wvr=5&mod=headfollow">
+			<strong node-type="follow">50</strong>
+			<span>Following</span>
+		</a>
+	</li>
+	<li class="follower S_line1">
+		<a class="S_func1" name="place" href="/p/1005053514412273/follow?relate=fans&from=100505&wvr=5&mod=headfans">
+			<strong node-type="fans">17</strong>
+			<span>Followers</span>
+		</a>
+	</li>
+	<li class="W_no_border">
+		<a class="S_func1" name="profile_tab" href="/p/1005053514412273/weibo?from=page_100505&wvr=5&mod=headweibo">
+			<strong node-type="weibo">1566</strong>
+			<span>Weibo</span>
+		</a>
+	</li>
+</ul>
+		</div>
+	</div>
+</div>
+</div>
