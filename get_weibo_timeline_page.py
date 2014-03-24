@@ -181,7 +181,8 @@ def write_page_to_file(request, initdir):
 				continue
 			else:
 				timeline_page_list_json = json.JSONEncoder().encode(timeline_page_list)
-				log('Write weibo to file' + filename, open(weiboContent_pwd + str(timeline_page_list[0]['user_id']) + '_top_5_page', 'w').write(timeline_page_list_json))
+				file_pwd = '/'.join([weiboContent_pwd, str(timeline_page_list[0]['user_id']) + '_top_5_page'])
+				log('Write weibo to file' + file_pwd, open(file_pwd, 'w').write(timeline_page_list_json))
 			
 			fp.write(line)
 	
