@@ -1,3 +1,7 @@
+#
+# doufunao
+# 2014-03
+#
 import re
 import os
 import json
@@ -122,27 +126,32 @@ def weibo_file_parse(weibo_content_str):
 			user_info
 			weibo_content_list
 	'''
-	#weibo_content_list_raw = weibo_content_str.split('=+=+=\n')	
-	if len(weibo_content_list_raw)<3:
-		weibo_content_list_raw = weibo_content_str.split('<!--break-->')
+
+	#----weibo_content_list_raw = weibo_content_str.split('=+=+=\n')	
+	#----if len(weibo_content_list_raw)<3:
+	#----	weibo_content_list_raw = weibo_content_str.split('<!--break-->')
+	#---- The lines has ----mark is contributed in the page files before
+	#JUST INGORE!!
+
 	weibo_content_list = []
-	for weibo in weibo_content_list_raw:
-		soup = BeautifulSoup(weibo)
-		#print(str(weibo_content_list.index(weibo)))
-		for div in soup('div', attrs = {'class':'WB_feed_type SW_fun S_line2 '}):
-			'''
-			获得微博基本信息weibo_info_dict
-			'''
-			weibo_dict = {}
-			__weibo_struct_extract(div, weibo_dict)
-			#log('weibo_dict', repr(weibo_dict))
-			#json编码
-			#print(json.dumps(weibo_dict, sort_keys=True, indent=4 * ' '))
-			#print(div.prettify())
-			#print(repr(weibo_dict))
-			#weibo_dict_json = json.JSONEncoder().encode(weibo_dict)
-			weibo_content_list.append(weibo_dict)
-			del weibo_dict
+	#----for weibo in weibo_content_list_raw:
+	soup = BeautifulSoup(weibo_content_str)
+	#print(str(weibo_content_list.index(weibo)))
+	results = soup('div', attrs = {'class':'WB_feed_type SW_fun S_line2 '})
+	for div in results:
+		'''
+		获得微博基本信息weibo_info_dict
+		'''
+		weibo_dict = {}
+		__weibo_struct_extract(div, weibo_dict)
+		#log('weibo_dict', repr(weibo_dict))
+		#json编码
+		#print(json.dumps(weibo_dict, sort_keys=True, indent=4 * ' '))
+		#print(div.prettify())
+		#print(repr(weibo_dict))
+		#weibo_dict_json = json.JSONEncoder().encode(weibo_dict)
+		weibo_content_list.append(weibo_dict)
+		del weibo_dict
 	
 	return weibo_content_list
 
@@ -183,34 +192,41 @@ def __insert_list_to_collection(collname, weibo_list):
 	dbo = dboperator.Dboperator(collname)
 	for weibo in weibo_list:
 		dbo.insert(weibo)
+def __load_weibo_page_str(weibo_page_dict_list):
+	weibo_page_str_list = []
+	for pdict in weibo_page_dict_list:
+		weibo_page_str_list.append(pdict['htmlstr'])
+	weibo_page_str = '\n'.join(weibo_page_str_list)
+	log('weibo_page_str_list', len(weibo_page_str_list))
+	return weibo_page_str
 def insert_weibolist_to_mongodb(initdir, collname):
 	'''
 	read htmlstr from file
 	after analysing them, insert weibo into mongodb
 	'''
 	data_pwd = initdir.pwd_dict['data']
-	collname = 'timeline0313'
 	for key_dir in os.listdir(data_pwd):
 		pwd_dict = initdir.get_pwd_per_keyword(key_dir)
-		file_read_pwd = pwd_dict['weiboContent']
+		file_read_pwd = pwd_dict['weibo_Content']
 		error_weiboContent_pwd = pwd_dict['error_weibo_Content']
-		weiboContent_get_pwd = pwd_dict['weiboContent_get']
+		weiboContent_get_pwd = pwd_dict['weibo_Content_get']
 	#	if os.path.exists(error_weiboContent_pwd) != 1:
 	#		log('create dir error_weiboContent', os.mkdir(error_weiboContent_pwd))		
 	#	if os.path.exists(weiboContent_get_pwd) != 1:
 	#		log('create dir weiboContent_get', os.mkdir(weiboContent_get_pwd))
 		for page_file in os.listdir(file_read_pwd):
 			#try:
-			page_file_pwd = file_read_pwd + page_file
+			page_file_pwd = '/'.join([file_read_pwd, page_file])
 			f = open(page_file_pwd, 'r')
-			weibo_content_str = json.loads(f.read())
+			weibo_page_dict_list = json.loads(f.read())
 			f.close()
 			#log('Find', weibo_content_str.find('This page has no'))
-			if weibo_content_str.find('This page has no') != -1 or len(weibo_content_str) < 2 :
+			weibo_content_str = __load_weibo_page_str(weibo_page_dict_list)
+			if weibo_content_str.find('This page has no') != -1:
 				error_page_file_pwd = error_weiboContent_pwd + page_file
 				log('move file ' + page_file, shutil.move(page_file_pwd, error_page_file_pwd))
 				continue
-			log('Start to get', page_file)
+			log('Start to get', page_file)			
 			weibo_list = weibo_file_parse(weibo_content_str)			
 			__insert_list_to_collection(collname, weibo_list)
 			log('insert ',page_file)
@@ -219,5 +235,5 @@ def insert_weibolist_to_mongodb(initdir, collname):
 	
 if __name__ == '__main__':
 	current_pwd = os.getcwd()
-	initdir = init.InitDir(current_cwd)
-	insert_weibolist_to_mongodb(initdir, 'timeline0318')
+	initdir = init.InitDir(current_pwd)
+	insert_weibolist_to_mongodb(initdir, 'timeline0324')

@@ -1,3 +1,8 @@
+#
+# doufunao
+# 2014-03
+#
+
 import urllib.request
 import weibocrawler
 import json
@@ -172,7 +177,7 @@ def write_page_to_file(request, initdir):
 			weiboContent_pwd = '/'.join([data_pwd, dirname, initdir.dir_dict['weibo_Content']])
 			if os.path.exists(weiboContent_pwd) == False:
 				#os.mkdir(weiboContent_pwd)
-				log('write_page_to_file', weiboContent_pwd+' doesnt exist')
+				log('write_page_to_file', weiboContent_pwd + ' doesnt exist')
 				sys.exit(0)
 			print('==================================================================================')
 			timeline_page_list = get_all_timeline_page(request, weibo_timeline_urlstr)			
