@@ -17,7 +17,9 @@ def log(tag, text):
     """
     datetime_str = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     logstr = "[{0}] {1}: {2}".format(datetime_str, tag, text)
+    '''
     f = open('log' + datetime.datetime.now().strftime("%Y%m%d%H"), 'a')
     f.write(logstr)
     f.close()
+    '''
     print(logstr)

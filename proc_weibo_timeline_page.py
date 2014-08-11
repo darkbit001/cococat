@@ -236,4 +236,4 @@ def insert_weibolist_to_mongodb(initdir, collname):
 if __name__ == '__main__':
 	current_pwd = os.getcwd()
 	initdir = init.InitDir(current_pwd)
-	insert_weibolist_to_mongodb(initdir, 'timeline0324')
+	insert_weibolist_to_mongodb(initdir, 'timeline0428')

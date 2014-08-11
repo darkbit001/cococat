@@ -30,6 +30,9 @@ class InitDir():
 		self.dir_dict['error_weibo_Content'] = 'error_weiboContent'
 		self.dir_dict['weibo_Content_get'] = 'weiboContent_get'
 		self.dir_dict['script_Content'] = 'scriptContent'
+		self.dir_dict['follow_page'] = 'followPage'
+		self.dir_dict['user_dict'] = 'userDict'
+
 
 		self.file_dict['keyword_file'] = 'userdict.txt'
 		self.file_dict['nicklist'] = 'nicklist'
@@ -43,22 +46,41 @@ class InitDir():
 		'''
 		Get keywod's all pwd which are needed
 		'''
-		current_pwd = self.pwd_dict['current']
-		self.pwd_dict['keyword_dir'] = '/'.join([current_pwd, keyword])
+		data_pwd = self.pwd_dict['data']
+		self.pwd_dict['keyword_dir'] = '/'.join([data_pwd, keyword])
 		keyword_dir_pwd = self.pwd_dict['keyword_dir']
-		for k, v in self.file_dict:
+		for k, v in self.file_dict.items():
 			if k == 'keyword_file':
 				continue
 			self.pwd_dict[k] = '/'.join([keyword_dir_pwd, v])
 		
-		for k,v in self.dir_dict:
+		for k,v in self.dir_dict.items():
 			if k == 'data':
 				continue
 			self.pwd_dict[k] = '/'.join([keyword_dir_pwd, v])
 		pwd_dict = self.pwd_dict
 		return pwd_dict
+	def get_subdirlist_per_dir(self, dir_dict_name):
+		'''
+		This Function list all first sub dir in the 'Data' dir
+		Demo:
+			get_listdir('follow_page')
+			Will return 
+				current_pwd/Data/subdir1/followPage
+				current_pwd/Data/subdir2/followPage
+				current_pwd/Data/subdir3/followPage
+
+		'''
+		pwd = self.pwd_dict['data']
+		dir_list = os.listdir(pwd)
+		keyword_list = []		
+		for key in dir_list:
+			pwd = '/'.join([self.pwd_dict['data'], key, dir_dict_name])
+			keyword_list.append(pwd)
+		return keyword_list
 	def get_keyword_list(self):	
 		'''
+		This Function just read the keywords from 'userdict.txt' file;
 		Note:
 			The format of keyword file is like this:
 				keyword  3

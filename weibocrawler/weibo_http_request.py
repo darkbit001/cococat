@@ -91,7 +91,7 @@ class WeiboHttpRequest:
         A GET request to the url and returns the content of that url in str type
         """
 
-        log.log("http_request", "GET {0}".format(url))
+        # log.log("http_request", "GET {0}".format(url))
 
         request = urllib.request.Request(url = url, headers = self.__build_header(enable_cookie))
         fp = urllib.request.urlopen(request)
@@ -113,10 +113,10 @@ class WeiboHttpRequest:
             f = gzip.GzipFile(fileobj = buf)
             content = f.read()
             log.log("http_request", "unzip {0} -> {1}".format(content_len, len(content)))
-            log.log('This py program\'s pwd', os.getcwd())
+            #log.log('This py program\'s pwd', os.getcwd())
             #f = open('bodycache.txt','w')
             #f.write(content.decode('utf-8'))
-        return content.decode('utf-8','ignore')
+        return content.decode('utf-8')
 
     def post(self, url, data):
         """

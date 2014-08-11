@@ -12,7 +12,7 @@ def convert_cookies():
 	shutil.copyfile('cookies.json', 'cookies.json_backup')
 	string = open('cookies_copy', 'r').read()
 	cookies_dict_new = {}
-	cookies_dict_old = json.loads(open('cookies.json', 'r').read())
+	cookies_dict_old = json.loads(open('cookies_template', 'r').read())
 
 	for a_dict_string in string.split(';'):
 		loc = a_dict_string.find('=')
@@ -24,5 +24,5 @@ def convert_cookies():
 	dict_dumps = json.dumps(cookies_dict_new)
 	open('cookies.json', 'w').write(dict_dumps)
 	print('>.< Have successfully created cookies.json by hand!')
-#if __name__ == '__main__':
-#	convert_cookies()
+# if __name__ == '__main__':
+# 	convert_cookies()

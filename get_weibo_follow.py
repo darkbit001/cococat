@@ -8,15 +8,21 @@
 # This Program cann only run under Ubuntu
 import os
 import re
+import sys
+import math
 import urllib.request
 import weibocrawler
+import convert_cookies as cookie
 from bs4 import BeautifulSoup
 import json
 import time
 import random
-def get_request():
+
+def get_request(check_cookie_file = False):
 	username = 'e1248698@drdrb.com'
 	password = 'e1248698'
+	if check_cookie_file == True:
+		cookie.convert_cookies()
 	login = weibocrawler.WeiboLogin(username, password)
 	http_request = weibocrawler.WeiboHttpRequest(login)
 	return http_request
@@ -99,12 +105,14 @@ def get_user_header_html_str(request, user_dict, write_flag = False):
 	
 def get_follow_list(user_dict, html_str, follow_flag  = 'following'):
 	result_list = []
-	follow_re_list = {'uid_nickname_sex': r'action-type="itemClick" action-data="uid=(\d+?)&fnick=([^&]+?)&sex=([fm]?)"',
+	follow_re_list = {'uid_nickname_sex': r'action-type="itemClick" action-data="uid=(\d+?)&fnick=([^&]*?)&sex=([fm]?)"',
 		'followurl_path': r'通过<a href="(http://[^"]+?)" class="S_link2" >([^<]+?)</a>关注'
              }
 	try:
 		pattern_uid_nickname_sex = re.compile(follow_re_list['uid_nickname_sex'])
 		pattern_followurl_path = re.compile(follow_re_list['followurl_path'])
+		# print(len(pattern_uid_nickname_sex.findall(html_str)))
+		# print(len(pattern_followurl_path.findall(html_str)))
 		if len(pattern_uid_nickname_sex.findall(html_str)) == len(pattern_followurl_path.findall(html_str)):
 			for r, z in zip(pattern_uid_nickname_sex.findall(html_str), pattern_followurl_path.findall(html_str)):
 				following_dict = {}
@@ -114,8 +122,18 @@ def get_follow_list(user_dict, html_str, follow_flag  = 'following'):
 				following_dict['path_url'] = z[0]
 				following_dict['path'] = z[1]
 				result_list.append(following_dict)
+		else:
+			print('The len of uid_nickname_sex isn\'t equal to the len of follow path, please check the html str crawler from Chinese Simple web page.')
+			# fd = open('tt_test', 'w')
+			# fd.write(str(len(pattern_uid_nickname_sex.findall(html_str))))
+			# fd.write('\n')
+			# fd.write(str(len(pattern_followurl_path.findall(html_str))))
+			# fd.write('\n')			
+			# fd.write(html_str)
+			# fd.close()
 		#weibocrawler.log('pattern follow list', 're methond')
-	except:
+	except Exception as e:
+		print(e)
 		del result_list[:]
 		soup = BeautifulSoup(html_str)
 		pattern = re.compile(r'uid=(\d+?)&fnick=(.*?)&sex=(.+?)')
@@ -216,12 +234,12 @@ def get_all_user_follow_page_html_str(request, user_dict, html_str_dict, follow_
 	html_str_dict['user_info'] = user_dict
 	html_str_dict[follow_flag + '_page'] = []
 
-	if int(user_dict[follow_flag + '_num']) > 1000:
-		weibocrawler.log('get all user follow page', 'follow flag num > 1000')
-		html_str_dict[follow_flag + '_page'].append({'error_info':follow_flag + '_num > 1000'})
-		return
+	# if int(user_dict[follow_flag + '_num']) > 1500:
+	# 	weibocrawler.log('get all user follow page', 'follow flag num > 1500')
+	# 	html_str_dict[follow_flag + '_page'].append({'error_info':follow_flag + '_num > 1500'})
+	# 	return
 
-	pl_num = 33
+	pl_num = 29
 	start_page = 1
 	if follow_flag == 'following':
 		urlstr = 'http://weibo.com/p/{0}/follow?pids=Pl_Official_LeftHisRelation__{1}&page={2}&ajaxpagelet=1'.format(page_id, pl_num, start_page)
@@ -234,7 +252,7 @@ def get_all_user_follow_page_html_str(request, user_dict, html_str_dict, follow_
 		html_str = None
 		while flag:
 			try:
-				weibocrawler.log(follow_flag + ' page err_count',str(err_count) + '\tpage:\t' + str(page))
+				# weibocrawler.log(follow_flag + ' page err_count',str(err_count) + '\tpage:\t' + str(page))
 				html_str = get_user_follow_html_str(request, urlstr, follow_flag)
 				flag = False
 			except:
@@ -259,7 +277,13 @@ def get_all_user_follow_page_html_str(request, user_dict, html_str_dict, follow_
 		start_page = 2
 		weibocrawler.log('start_page', start_page)
 
-	for page in range(start_page, 11):
+
+	num_name = follow_flag + '_num'
+	end_page_num = math.ceil(int(user_dict[num_name]) / 20) + 1
+	if end_page_num > 11:
+		end_page_num = 11
+
+	for page in range(start_page, end_page_num):
 		if follow_flag == 'following':
 			urlstr = 'http://weibo.com/p/{0}/follow?pids=Pl_Official_LeftHisRelation__{1}&page={2}&ajaxpagelet=1'.format(page_id, pl_num, page)
 		elif follow_flag == 'follower':
@@ -268,7 +292,7 @@ def get_all_user_follow_page_html_str(request, user_dict, html_str_dict, follow_
 		html_str = get_html_str(page)
 		if html_str == None:
 			break
-		weibocrawler.log('The len of html_str', len(html_str))
+		# weibocrawler.log('The len of html_str', len(html_str))
 		weibocrawler.log('page_id ' + str(page_id)+ ' ' + str(page), html_str_dict[follow_flag + '_page'].append(html_str))
 	#return html_str_dict
 
@@ -284,7 +308,7 @@ def write_follow_page_to_file(request, current_pwd):
 	'''	
 	data_pwd = current_pwd + '/Data/'
 	dir_in_data = os.listdir(data_pwd)
-	nicklist_filename = 'nicklist_new'
+	nicklist_filename = 'nicklist'
 	html_str_dict = {}			
 	for dirname in dir_in_data:
 		dir_pwd = data_pwd + dirname + '/'
@@ -301,7 +325,7 @@ def write_follow_page_to_file(request, current_pwd):
 			user_dict = {}
 			user_dict['followerlist'] = []
 			user_dict['followinglist'] = []
-			user_dict['home_page'] = line
+			user_dict['home_page'] = line.strip()
 			urlstr = line.split(' ')[0]
 			time.sleep(3)
 			print('==================================================================================')
@@ -345,6 +369,7 @@ def write_follow_list_to_file(current_pwd):
 	followlist in current_pwd/Data/Keyword/userDict/user_dict_[user_id]
 	data format : json 
 	'''
+	
 	data_pwd = current_pwd + '/Data/'
 	dir_in_data = os.listdir(data_pwd)
 	for dirname in dir_in_data:
@@ -360,34 +385,49 @@ def write_follow_list_to_file(current_pwd):
 
 		file_in_followPage = os.listdir(followPage_pwd)
 		for page_file in file_in_followPage:
-			if os.path.isdir(followPage_pwd + page_file):
+			try:
+				if os.path.isdir(followPage_pwd + page_file):
+					continue
+				jsondata = json.loads(open(followPage_pwd + page_file, 'r').read())
+				user_dict = jsondata['user_info']
+				user_id = user_dict['user_id']
+				#f1 = open(followPage_pwd + 'html_str/following_html_str_' + user_id, 'a')	
+				#f2 = open(followPage_pwd + 'html_str/follower_html_str_' + user_id, 'a')
+				#weibocrawler.log('user_id', user_id)
+				if len(jsondata['following_page']) > 0:
+					if type(jsondata['following_page'][0]) is dict:
+						user_dict['followinglist'] = []
+					else:								
+						for p in jsondata['following_page']:
+							#f1.write(p)
+							get_follow_list(user_dict, p, 'following')
+				else:
+					user_dict['followinglist'] = []
+				
+				if len(jsondata['follower_page']) > 0:
+					if type(jsondata['follower_page'][0]) is dict:
+						user_dict['followerlist'] = []
+					else:				
+						for p in jsondata['follower_page']:
+							#f2.write(p)
+							get_follow_list(user_dict, p, 'follower')
+				else:
+					user_dict['followerlist'] = []
+				#f1.close()
+				#f2.close()
+				f = open(dir_pwd + 'userDict/user_dict_' + str(user_id), 'w')
+				user_dict_json = json.JSONEncoder().encode(user_dict)
+
+				weibocrawler.log(str(user_id) + ' user dict write to file', f.write(user_dict_json))
+				f.close()
+			except:
+				weibocrawler.log('error_id', user_id)
+				open('error_follow', 'ab').write((followPage_pwd + page_file + ' ' + user_id).encode('utf-8'))				
+				time.sleep(5)
 				continue
-			jsondata = json.loads(open(followPage_pwd + page_file, 'r').read())
-			user_dict = jsondata['user_info']
-			user_id = user_dict['user_id']
-			#f1 = open(followPage_pwd + 'html_str/following_html_str_' + user_id, 'a')	
-			#f2 = open(followPage_pwd + 'html_str/follower_html_str_' + user_id, 'a')
-			if type(jsondata['following_page'][0]) is dict:
-				user_dict['followinglist'] = jsondata['following_page'][0]
-			else:								
-				for p in jsondata['following_page']:
-					#f1.write(p)
-					get_follow_list(user_dict, p, 'following')
-			if type(jsondata['follower_page'][0]) is dict:
-				user_dict['followerlist'] = jsondata['follower_page'][0]
-			else:				
-				for p in jsondata['follower_page']:
-					#f2.write(p)
-					get_follow_list(user_dict, p, 'follower')		
-			#f1.close()
-			#f2.close()
-			f = open(dir_pwd + 'userDict/user_dict_' + str(user_id), 'w')
-			user_dict_json = json.JSONEncoder().encode(user_dict)
-			weibocrawler.log(str(user_id) + ' user dict write to file', f.write(user_dict_json))
-			f.close()
 
 if __name__ == '__main__':
 	current_pwd = os.getcwd()
-	request = get_request()
+	request = get_request(True)
 	write_follow_page_to_file(request, current_pwd)
-	#write_follow_list_to_file(current_pwd)
+	write_follow_list_to_file(current_pwd)

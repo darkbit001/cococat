@@ -9,6 +9,8 @@ import re
 from weibocrawler import log
 import json
 import datetime
+import time
+import random
 
 __USER_HOMEPAGE_URL = 'http://weibo.com/{0}'
 __MESSAGE_PAGE_URL = 'http://weibo.com/p/aj/mblog/mbloglist?page={page}&id={page_id}'
@@ -56,7 +58,7 @@ def get_timeline_page(http_request, page_id, page):
     return text_list, create_at_list, mid_list
 
 
-def get_weibo_user_timeline(http_request, user_id, max_count = 1000):
+def get_weibo_user_timeline(http_request, user_id, max_count = 100):
     user_homepage_html = http_request.get(__USER_HOMEPAGE_URL.format(user_id))
 
     # Get page_id from user's homepage
@@ -78,22 +80,38 @@ def get_weibo_user_timeline(http_request, user_id, max_count = 1000):
     log("weibo_timeline", "user's screen_name is : " + screen_name) 
 
     message_list = []
+    print('Have a rest in 5 second.')
+    for x in range(1,6):
+        print(str(6-x) + ' s')
+        time.sleep(1)
+
     for page in range(1, 100):
         text_list, create_at_list, mid_list = get_timeline_page(http_request, page_id, page)
-        for i in range(len(text_list)):
-            message = Message(
-                user_id = user_id,
-                screen_name = screen_name,
-                create_time = create_at_list[i],
-                url = "",
-                mid = mid_list[i],
-                forward_count = 0,
-                reply_count = 0,
-                text = text_list[i])
-            message_list.append(message)
+        print('The length of text_list : ' + str(len(text_list)))
+        if len(text_list) == 0:
+            print('No more text_list in page '+ str(page))
+            return message_list
+        else:
+            for i in range(len(text_list)):
+                message = Message(
+                    user_id = user_id,
+                    screen_name = screen_name,
+                    create_time = create_at_list[i],
+                    url = "",
+                    mid = mid_list[i],
+                    forward_count = 0,
+                    reply_count = 0,
+                    text = text_list[i])
+                message_list.append(message)
+                print('Page ' + str(page) + '. The length of message_list : ' +str(len(message_list)))
 
         if max_count < len(message_list):
-            break
+            print('The message_list has over 100 items.')
+            return message_list
+
+        sleeptime = random.randint(10,40)
+        print('Sleeptime : ' + str(sleeptime) +' s')
+        time.sleep(sleeptime)
 
     return message_list
 

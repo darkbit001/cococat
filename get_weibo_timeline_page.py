@@ -9,14 +9,17 @@ import json
 import os
 import re
 from bs4 import BeautifulSoup
+import convert_cookies as cookie
 import time
 import random
 from weibocrawler import log
 import get_weibo_follow
 import init
+import math
 
-
-def get_request():
+def get_request(check_cookie_file):
+	if check_cookie_file == 1:
+		cookie.convert_cookies()
 	username = 'e1441430@drdrb.com'
 	password = 'e1441430'
 	login = weibocrawler.WeiboLogin(username, password)
@@ -49,7 +52,7 @@ def __get_each_timeline_page(http_request, para_dict):
 	print_dict = {}
 	print_dict.update(para_dict)
 	print_dict['htmlstr'] = ''
-	log('Will get page', repr(print_dict))
+	# log('Will get page', repr(print_dict))
 	del print_dict
 	sleeptime = random.randint(5,10)
 	log('Ready to get each json data. Just have a rest', 'sleeptime: ' + str(sleeptime))
@@ -65,12 +68,14 @@ def __get_each_timeline_page(http_request, para_dict):
 		break_para = True
 	para_dict['json_urlstr'] = json_urlstr
 	return htmlstr, break_para
+
 def __list_append_more_dicts(timeline_list, para_dict_list):
 	temp_dict = {}
 	for d in para_dict_list:
 		temp_dict.update(d)
 	timeline_list.append(temp_dict)
 	return timeline_list
+
 def __get_page_and_add_to_list(http_request, timeline_page_list, para_dict):
 	htmlstr, break_para = __get_each_timeline_page(http_request, para_dict)
 	if break_para == True:
@@ -102,8 +107,8 @@ def get_all_timeline_page(http_request, urlstr):
 		#print('user_id = -1 , break')
 		return timeline_page_list
 	
-	end_page_num = int((int(user_dict['weibo_num']) / 45) + 1)
-	log('end_page_num', end_page_num)
+	end_page_num = math.ceil(int(user_dict['weibo_num']) / 45) + 1
+	log('end_page_num', end_page_num - 1)
 	if 	end_page_num > 5:
 		end_page_num = 11
 
@@ -172,8 +177,11 @@ def write_page_to_file(request, initdir):
 		fp = open(timeline_page_got_pwd, 'a')
 
 		for line in f:
-			weibo_timeline_urlstr = line.split('\t')[0]
-			weibo_timeline_nickname = line.split('\t')[1]
+			if len(line.split()) > 1:
+				weibo_timeline_urlstr = line.split()[0]
+				weibo_timeline_nickname = line.split()[1]
+			else:
+				weibo_timeline_urlstr = line.strip()
 			weiboContent_pwd = '/'.join([data_pwd, dirname, initdir.dir_dict['weibo_Content']])
 			if os.path.exists(weiboContent_pwd) == False:
 				#os.mkdir(weiboContent_pwd)
@@ -242,9 +250,7 @@ def data_convert_to_json(current_pwd):
 				
 
 if __name__ == '__main__':
-
-
-	request = get_request()
+	request = get_request(1)
 	current_pwd = os.getcwd()
 	initdir = init.InitDir(current_pwd)
 	write_page_to_file(request, initdir)

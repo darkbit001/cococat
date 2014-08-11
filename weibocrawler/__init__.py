@@ -6,3 +6,4 @@ from weibocrawler.weibo_profile import WeiboProfile
 from weibocrawler.weibo_timeline import get_weibo_user_timeline
 from weibocrawler.weibo_reply import get_weibo_reply
 from weibocrawler.weibo_follow import get_follow_list
+from weibocrawler.config import getconfig

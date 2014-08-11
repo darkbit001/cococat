@@ -43,7 +43,7 @@ class WeiboPageAnalyzer:
             if(-1 == _weibo_tuple[0]): 
                 break
             _entry = WeiboEntry(_weibo_tuple[2])
-            #_entry.print()
+            _entry.print()
             self.__weibo_info_list.append(WeiboInfo(_entry).convert_to_message())
 
     def __extract_weibo_entry(self,beg):
