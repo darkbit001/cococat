@@ -7,6 +7,7 @@
 
 import re
 from weibocrawler import dboperator
+from weibocrawler import log
 
 def userinfo_parser(html_str):
 	user_dict = {}
@@ -24,6 +25,7 @@ def userinfo_parser(html_str):
 		user_dict['page_id'] = -1
 	
 	return user_dict
+	
 def parse_user_base_infos(dbo_userpages):
 	cursor = dbo_userpages.coll.find({}, {'htmlStr': 1, 'pageUrl': 1})
 	for c in cursor:
@@ -37,40 +39,59 @@ def parse_user_base_infos(dbo_userpages):
 		dbo_userpages.coll.update({'_id': _id} ,{'$set': {'userId': userId, 'pageId': pageId, 'nickName': nickName} }, multi = True)
 		if pageId == -1:
 			print(pageUrl)
+
+	log('parse_user_base_infos', 'Finished')
+
 	return
+def find_num(pattern, htmlstr):
+	s1 = set(pattern.findall(htmlstr)[0])
+	s2 = set([''])
+	num = list(s1-s2)
+	if len(num) > 1:
+		print('mygod')
+	return num[0]
+
 def relation_parser(htmlStr):
 	user_dict = {}
 	user_dict['follower_num'] = -1
 	user_dict['followee_num'] = -1
-	user_dict['weibo_num'] = -1
-	pattern_follower_num = re.compile(r'<strong node-type=\\"fans\\">(.+?)<\\/strong>\\r\\n\\t\\t\\t<span>粉丝<\\/span>')
-	pattern_followee_num = re.compile(r'<strong node-type=\\"follow\\">(.+?)<\\/strong>\\r\\n\\t\\t\\t<span>关注 <\\/span>')
-	pattern_weibo_num = re.compile(r'<strong node-type=\\"weibo\\">(.+?)<\\/strong>\\r\\n\\t\\t\\t<span>微博<\\/span>')
-	if pattern_follower_num.search(html_str) != None:
-		user_dict['follower_num'] = pattern_follower_num.findall(html_str)[0]
-	if pattern_followee_num.search(html_str) != None:
-		user_dict['followee_num'] = pattern_followee_num.findall(html_str)[0]
-	if pattern_weibo_num.search(html_str) != None:
-		user_dict['weibo_num'] = pattern_weibo_num.findall(html_str)[0]
+	user_dict['weibo_num'] = -1 
+	pattern_follower_num = re.compile(r'<strong node-type=\\"fans\\">(.+?)<\\/strong>|<strong class=\\"W_f20\\">(.+?)<\\/strong><span>粉丝<\\/span>|<strong class=\\"\\">(.+?)<\\/strong><span>粉丝<\\/span>')
+	pattern_followee_num = re.compile(r'<strong node-type=\\"follow\\">(.+?)<\\/strong>|<strong class=\\"W_f20\\">(.+?)<\\/strong><span>关注<\\/span>|<strong class=\\"\\">(.+?)<\\/strong><span>关注<\\/span>')
+	pattern_weibo_num = re.compile(r'<strong node-type=\\"weibo\\">(.+?)<\\/strong>|<strong class=\\"W_f20\\">(.+?)<\\/strong><span>微博<\\/span>|<strong class=\\"\\">(.+?)<\\/strong><span>微博<\\/span>')
+
+	if pattern_follower_num.search(htmlStr) != None:
+		user_dict['follower_num'] = find_num(pattern_follower_num, htmlStr)
+
+	if pattern_followee_num.search(htmlStr) != None:
+		user_dict['followee_num'] = find_num(pattern_followee_num, htmlStr)
+
+	if pattern_weibo_num.search(htmlStr) != None:
+		user_dict['weibo_num'] = find_num(pattern_weibo_num, htmlStr)
+	
 	return user_dict
 	
 def parse_user_relation(dbo_userpages):
-	cursor = dbo_userpages.coll.findOne({}, {'htmlStr': 1})
+	cursor = dbo_userpages.coll.find({}, {'htmlStr': 1, 'pageUrl': 1})
 	for c in cursor:
 		_id = c['_id']
-		htmlStr = c['htmlStr']
-		ud = relation_parser(htmlStr)
+		# pageurl = c['pageUrl']
+		htmlstr = c['htmlStr']
+		ud = relation_parser(htmlstr)
 		follower_num = ud['follower_num']
-		followee_num = ud['follower_num']
+		followee_num = ud['followee_num']
 		weibo_num = ud['weibo_num']
-		print(follower_num)
-		print(followee_num)
-		print(weibo_num)
-		#dbo_userpages.coll.update({'_id': _id} ,{'$set': {'followerNum': follower_num, 'followeeNum': followee_num, 'weiboNum': weibo_num} }, multi = True)
+		if follower_num == -1 or followee_num == -1 or weibo_num == -1:			
+			# print(pageurl)
+			# print(re.search('抱歉，', htmlstr))
+			continue
+		dbo_userpages.coll.update({'_id': _id} ,{'$set': {'followerNum': follower_num, 'followeeNum': followee_num, 'weiboNum': weibo_num} }, multi = True)
+	log('parse_user_relation', 'Finished')
 	return
+
 def main():
 	dbo = dboperator.Dboperator(collname = 'UserHomePages')
-	parse_user_base_infos(dbo)
+	# parse_user_base_infos(dbo)
 	parse_user_relation(dbo)
 	dbo.connclose()
 

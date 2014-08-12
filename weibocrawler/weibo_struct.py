@@ -172,7 +172,7 @@ class TimelinePage(Page):
         pagedic['page'] = self.page
         pagedic['pageId'] = self.pageid
         pagedic['userId'] = self.userid
-        pagedic['pageBar'] = self.pageBar
+        pagedic['pageBar'] = self.pagebar
         pagedic['prePage'] = self.prepage
         return pagedic
 

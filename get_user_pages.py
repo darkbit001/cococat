@@ -4,7 +4,6 @@ from weibocrawler import dboperator
 from weibocrawler import weibo_struct
 import time
 import random
-import re
 import datetime
 from convert_cookies import convert_cookies
 
@@ -20,6 +19,7 @@ def get_request(check_cookie_file = True):
 def crawler_pages(http_request, dbo_userpages, dbo_userclawer):
 	up = weibo_struct.UserHomePage()
 	urls = dbo_userclawer.coll.find({},{'crawled': 1, 'href': 1})
+	# urls = dbo_userclawer.coll.find({'href': 'http://weibo.com/u/3867395827'},{'crawled': 1, 'href': 1})
 	for url in urls:
 		if int(url.get('crawled', 0)) == 1:
 			continue
@@ -30,8 +30,8 @@ def crawler_pages(http_request, dbo_userpages, dbo_userclawer):
 			up.pageurl = href
 			# ud = userinfo_parser(htmlstr)
 			up.nickname = '' # ud['screen_name']
-			up.pageId = '' # ud['page_id']
-			up.userid = '' # ud['user_id']
+			up.pageId = -1 # ud['page_id']
+			up.userid = -1 # ud['user_id']
 			up.crawlertime = datetime.datetime.now().timestamp()
 			upd = up.getdict()
 			upd['nickId'] = url['_id']

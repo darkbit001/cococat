@@ -11,8 +11,8 @@ from weibocrawler import log
 from weibocrawler import dboperator
 from weibocrawler import weibo_struct
 import time
+import math
 import random
-import re
 import datetime
 from convert_cookies import convert_cookies
 
@@ -70,21 +70,33 @@ def crawl_timeline_pages(http_request, pageId, end_page_num):
 		user_timeline_pages.append(para_dict)
 
 	return user_timeline_pages
-
-def get_user_timeline_pages(http_request, dbo_userpages, dbo_timelinepages, end_page_num = 6):
+def cal_page_num(weibonum, page_num_upper_bound):
+	end_page_num = math.ceil(int(weibonum) / 45) + 1
+	if end_page_num > page_num_upper_bound:
+		end_page_num = page_num_upper_bound + 1
+	return end_page_num
+def get_user_timeline_pages(http_request, dbo_userpages, dbo_timelinepages, end_page_num = 10):
 	dbo1 = dbo_userpages
 	dbo2 = dbo_timelinepages
-	pid_cursor = dbo1.coll.find({},{'crawled': 1, 'pageId': 1, 'userId': 1})
+	pid_cursor = dbo1.coll.find({},{'crawled': 1, 'pageId': 1, 'userId': 1, 'weiboNum': 1})
 	timebatch = datetime.datetime.now().timestamp()
 	for user in pid_cursor:
+		_id = user['_id']
 		userid = user['userId']
 		pageid = user['pageId']
+		# print(userid)
+		# print(user.get('weiboNum', -1))
+		# return
+		weibonum = int(user.get('weiboNum', -1))
 		crawled = int(user.get('crawled', 0))
 		if crawled == 1:
 			continue
-		if pageid == '':
+		if pageid == -1 or pageid == '':
 			continue
-		tlp = TimelinePage(userid = userid, pageid = pageid)
+		if weibonum == -1:
+			continue
+		tlp = weibo_struct.TimelinePage(userid = userid, pageid = pageid)
+		end_page_num = cal_page_num(weibonum, 10) # get the first 10 timeline page
 		user_timeline_pages = crawl_timeline_pages(http_request, pageid, end_page_num)
 		for timeline in user_timeline_pages:
 			tlp.page = timeline['page']
@@ -95,6 +107,7 @@ def get_user_timeline_pages(http_request, dbo_userpages, dbo_timelinepages, end_
 			tlp.crawlertime = timeline['crawlerTime']
 			timelinedict = tlp.getdict()
 			timelinedict['timeBatch'] = timebatch
+			timelinedict['userHomePageId'] = _id
 			dbo2.coll.insert(timelinedict)
 			del timelinedict
 		log('get_user_timeline_pages', 'userid: ' + str(userid) + 'pageid: ' + str(pageid))
@@ -103,6 +116,7 @@ def main():
 	http_request = get_request()
 	dbo1 = dboperator.Dboperator(collname = 'UserHomePages')
 	dbo2 = dboperator.Dboperator(collname = 'UserTimelinePages')
-	get_user_timeline_pages(http_request, dbo1, dbo2, end_page_num = 6)
+	get_user_timeline_pages(http_request, dbo1, dbo2, end_page_num = 10)
 	dbo1.connclose()
 	dbo2.connclose()
+main()
