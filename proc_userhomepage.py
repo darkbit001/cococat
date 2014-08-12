@@ -45,10 +45,9 @@ def parse_user_base_infos(dbo_userpages):
 	return
 def find_num(pattern, htmlstr):
 	s1 = set(pattern.findall(htmlstr)[0])
+	print(pattern.findall(htmlstr)[0])
 	s2 = set([''])
 	num = list(s1-s2)
-	if len(num) > 1:
-		print('mygod')
 	return num[0]
 
 def relation_parser(htmlStr):
@@ -57,7 +56,7 @@ def relation_parser(htmlStr):
 	user_dict['followee_num'] = -1
 	user_dict['weibo_num'] = -1 
 	pattern_follower_num = re.compile(r'<strong node-type=\\"fans\\">(.+?)<\\/strong>|<strong class=\\"W_f20\\">(.+?)<\\/strong><span>粉丝<\\/span>|<strong class=\\"\\">(.+?)<\\/strong><span>粉丝<\\/span>')
-	pattern_followee_num = re.compile(r'<strong node-type=\\"follow\\">(.+?)<\\/strong>|<strong class=\\"W_f20\\">(.+?)<\\/strong><span>关注<\\/span>|<strong class=\\"\\">(.+?)<\\/strong><span>关注<\\/span>')
+	pattern_followee_num = re.compile(r'<strong node-type=\\"follow\\">(.+?)<\\/strong>|<strong class=\\"W_f20\\">(\d+?)<\\/strong><span>关注<\\/span>|<strong class=\\"\\">(\d+?)<\\/strong><span>关注<\\/span>')
 	pattern_weibo_num = re.compile(r'<strong node-type=\\"weibo\\">(.+?)<\\/strong>|<strong class=\\"W_f20\\">(.+?)<\\/strong><span>微博<\\/span>|<strong class=\\"\\">(.+?)<\\/strong><span>微博<\\/span>')
 
 	if pattern_follower_num.search(htmlStr) != None:
