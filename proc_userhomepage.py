@@ -24,7 +24,7 @@ def userinfo_parser(html_str):
 		user_dict['page_id'] = -1
 	
 	return user_dict
-def parse_userinfos(dbo_userpages):
+def parse_user_base_infos(dbo_userpages):
 	cursor = dbo_userpages.coll.find({}, {'htmlStr': 1, 'pageUrl': 1})
 	for c in cursor:
 		_id = c['_id']
@@ -38,9 +38,14 @@ def parse_userinfos(dbo_userpages):
 		if pageId == -1:
 			print(pageUrl)
 	return
+def parse_user_relation(dbo_userpages):
+	cursor = dbo_userpages.coll.find({}, {'htmlStr': 1, 'pageUrl': 1})
+	for c in cursor:
+		_id = c['_id']
+	pass
 def main():
 	dbo = dboperator.Dboperator(collname = 'UserHomePages')
-	parse_userinfos(dbo)
+	parse_user_base_infos(dbo)
 	dbo.connclose()
 
 main()
