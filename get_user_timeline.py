@@ -26,17 +26,20 @@ def get_request(check_cookie_file = True):
 	http_request = weibocrawler.WeiboHttpRequest(login)
 	return http_request
 
+def get_domain(pageid, userid):
+	return pageid.replace(userid, '')
+	
 def __crawl_each_timeline_page(http_request, para_dict):
 	sleeptime = random.randint(5,10)
 	log('Ready to get each json data. Just have a rest', 'sleeptime: ' + str(sleeptime))
 	time.sleep(sleeptime)		
-	json_urlstr = 'http://weibo.com/p/aj/mblog/mbloglist?pre_page=%(prePage)s&page=%(page)s&pagebar=%(pageBar)s&id=%(pageId)s' % (para_dict)
+	json_urlstr = 'http://weibo.com/p/aj/mblog/mbloglist?domain=%(domain)spre_page=%(prePage)s&page=%(page)s&pagebar=%(pageBar)s&id=%(pageId)s' % (para_dict)
 	jsonstr = http_request.get(json_urlstr)
 	para_dict['pageUrl'] = json_urlstr
 	para_dict['htmlStr'] = jsonstr
 	return
 
-def crawl_timeline_pages(http_request, pageId, end_page_num):
+def crawl_timeline_pages(http_request, userid, pageid, end_page_num):
 	'''
 	输入：获得cookie的request、pageId、end_page_num
 	输出：此人的前五页timeline内容
@@ -46,8 +49,9 @@ def crawl_timeline_pages(http_request, pageId, end_page_num):
 	para_dict['prePage'] = 0
 	para_dict['page'] = 1 # page number
 	para_dict['pageBar'] = 0 # section number
-	para_dict['pageId'] = pageId
-
+	para_dict['pageId'] = pageid
+	para_dict['userId'] = userid
+	para_dict['domain'] = get_domain(pageid, userid)
 	for page in range(1, end_page_num):
 		#url para : page_id = default, page = page, pre_page = 0, pagebar = 0
 		para_dict['page'] = page
@@ -75,6 +79,7 @@ def cal_page_num(weibonum, page_num_upper_bound):
 	if end_page_num > page_num_upper_bound:
 		end_page_num = page_num_upper_bound + 1
 	return end_page_num
+
 def get_user_timeline_pages(http_request, dbo_userpages, dbo_timelinepages, end_page_num = 10):
 	dbo1 = dbo_userpages
 	dbo2 = dbo_timelinepages
