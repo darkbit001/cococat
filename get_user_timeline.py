@@ -30,7 +30,7 @@ def get_domain(pageid, userid):
 	return pageid.replace(userid, '')
 	
 def __crawl_each_timeline_page(http_request, para_dict):
-	sleeptime = random.randint(5,10)
+	sleeptime = random.randint(3,8)
 	log('Ready to get each json data. Just have a rest', 'sleeptime: ' + str(sleeptime))
 	time.sleep(sleeptime)		
 	json_urlstr = 'http://weibo.com/p/aj/mblog/mbloglist?domain=%(domain)s&pre_page=%(prePage)s&page=%(page)s&pagebar=%(pageBar)s&id=%(pageId)s' % (para_dict)
@@ -56,12 +56,12 @@ def crawl_timeline_pages(http_request, userid, pageid, end_page_num):
 		#url para : page_id = default, page = page, pre_page = 0, pagebar = 0
 		para_dict['page'] = page
 		para_dict['prePage'] = 0
+		para_dict['pageBar'] = 0
 		para_dict['crawlerTime'] = datetime.datetime.now().timestamp()
 		__crawl_each_timeline_page(http_request, para_dict)
 		user_timeline_pages.append(para_dict)
 		#url para : page_id = default, page = page, pre_page = page, pagebar = 0
 		para_dict['prePage'] = page
-		para_dict['pageBar'] = 0
 		para_dict['crawlerTime'] = datetime.datetime.now().timestamp()
 		__crawl_each_timeline_page(http_request, para_dict)
 		user_timeline_pages.append(para_dict)
