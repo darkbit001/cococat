@@ -33,7 +33,7 @@ def __crawl_each_timeline_page(http_request, para_dict):
 	sleeptime = random.randint(5,10)
 	log('Ready to get each json data. Just have a rest', 'sleeptime: ' + str(sleeptime))
 	time.sleep(sleeptime)		
-	json_urlstr = 'http://weibo.com/p/aj/mblog/mbloglist?domain=%(domain)spre_page=%(prePage)s&page=%(page)s&pagebar=%(pageBar)s&id=%(pageId)s' % (para_dict)
+	json_urlstr = 'http://weibo.com/p/aj/mblog/mbloglist?domain=%(domain)s&pre_page=%(prePage)s&page=%(page)s&pagebar=%(pageBar)s&id=%(pageId)s' % (para_dict)
 	jsonstr = http_request.get(json_urlstr)
 	para_dict['pageUrl'] = json_urlstr
 	para_dict['htmlStr'] = jsonstr
@@ -102,7 +102,7 @@ def get_user_timeline_pages(http_request, dbo_userpages, dbo_timelinepages, end_
 			continue
 		tlp = weibo_struct.TimelinePage(userid = userid, pageid = pageid)
 		end_page_num = cal_page_num(weibonum, 10) # get the first 10 timeline page
-		user_timeline_pages = crawl_timeline_pages(http_request, pageid, end_page_num)
+		user_timeline_pages = crawl_timeline_pages(http_request, userid, pageid, end_page_num)
 		for timeline in user_timeline_pages:
 			tlp.page = timeline['page']
 			tlp.pagebar = timeline['pageBar']
