@@ -1,10 +1,9 @@
 import weibocrawler
 from weibocrawler import log
 from weibocrawler import dboperator
-from weibocrawler import weibo_struct
 import time
+import math
 import random
-import re
 import datetime
 from convert_cookies import convert_cookies
 
@@ -19,41 +18,86 @@ def get_request(check_cookie_file = True):
 	return http_request
 
 
-def crawl_user_follow_page(http_request, pageid):
+def crawl_follow_page(http_request, para_dict, flag = 'follower'):
 	'''
 	输入的urlstr返回的值应为script脚本信息
 	urlstr example:		
-		http://weibo.com/p/1002061618051664/follow?pids=Pl_Official_LeftHisRelation__33&page=4&ajaxpagelet=1
-		http://weibo.com/p/1005051330747684/follow?pids=Pl_Official_LeftHisRelation__32&page=1&ajaxpagelet=1
-	write_flag 控制是否写入文件
+		followee list http://weibo.com/p/1005051330747684/follow?pids=Pl_Official_LeftHisRelation&page=1&ajaxpagelet=1
+		follower list http://weibo.com/p/1005051330747684/follow?pids=Pl_Official_LeftHisRelation&page=1&ajaxpagelet=1&relate=fans	
 	'''
+	returndic = {}
 	sleeptime = random.randint(3,8)	
-	weibocrawler.log('get_user_following_html sleeptime', sleeptime)
+	log('get_user_following_html sleeptime', sleeptime)
 	time.sleep(sleeptime)
-	html_str = None
-	html_raw = request.get(urlstr)
-	if len(html_raw) < 500 :
-		weibocrawler.log('get follow page', 'Len of html_raw < 500')
-		if html_raw.find('\"html\"') == -1:
-			weibocrawler.log('get follow page', 'Cant find key [html]')
-			print(html_raw)
-			return html_str
-		weibocrawler.log('get follow page', 'Will sleep 20s')
-		print(html_raw)
-		time.sleep(20)
-		html_raw = request.get(urlstr)
-	soup = BeautifulSoup(html_raw)
-	script_content = soup.script.string
-	start_loc = script_content.find('(')+1
-	end_loc = len(script_content)-1
+	# url = ''
+	if flag == 'follower':
+		url = 'http://weibo.com/p/%(pageId)s/follow?pids=Pl_Official_LeftHisRelation__32&page=%(page)s&ajaxpagelet=1&relate=fans' % (para_dict)
+	elif flag == 'followee':
+		url = 'http://weibo.com/p/%(pageId)s/follow?pids=Pl_Official_LeftHisRelation__32&page=%(page)s&ajaxpagelet=1' % (para_dict)
+	para_dict['crawlerTime'] = datetime.datetime.now().timestamp()
+	htmlstr = http_request.get(url)
+	para_dict['htmlStr'] = htmlstr
+	para_dict['pageUrl'] = url
+	returndic.update(para_dict)
+	return returndic
 
-	if json.loads(script_content[start_loc:end_loc]).get('ns') != 'pl.content.followTab.index':
-		html_str = None
-		return html_str
+def crawl_user_follow_pages(http_request, pageid, end_page_num, flag = 'follower'):
+	followlist = []
+	para_dict = {}
+	para_dict['pageId'] = pageid
+	for page in range(1, end_page_num):
+		para_dict['page'] = page
+		followlist.append(crawl_follow_page(http_request, para_dict, flag))
+	return followlist
 
-	html_str = json.loads(script_content[start_loc:end_loc]).get('html')
+def cal_page_num(num):
+	end_page_num = math.ceil(int(num) / 20) + 1
+	if end_page_num > 10:
+		end_page_num = 11
+	return end_page_num
 
-	if write_flag == True:
-		current_pwd = os.getcwd()
-		weibocrawler.log('write to file', open(current_pwd + '\\SampleData\\user_follower_list_example', 'w').write(html_raw))
-	return html_str
+def get_users_follow_pages(http_request, dbo_userhomepages, dbo_relationpages, flag = 'follower'):
+	dbo1 = dbo_userhomepages
+	dbo2 = dbo_relationpages
+	pid_cursor = dbo1.coll.find({}, {'followerCrawled': 1, 'followeeCrawled': 1, 'pageId': 1, 'userId': 1, 'followerNum': 1, 'followeeNum': 1})
+	timebatch = datetime.datetime.now().timestamp()
+	for user in pid_cursor:
+		_id = user['_id']
+		pageid = user['pageId']
+		userid = user['userId']
+		numflag = flag + 'Num'
+		num = int(user.get(numflag, -1))
+		carwlerflag = flag + 'Crawled'
+		crawled = int(user.get(carwlerflag, 0))
+
+		if pageid == -1:
+			continue
+		if num == -1:
+			continue
+		if crawled == 1:
+			continue
+
+		end_page_num = cal_page_num(num)
+		followlist = crawl_user_follow_pages(http_request, pageid, end_page_num, flag)
+		for f in followlist:
+			newdic = {}
+			newdic.update(f)
+			newdic['userId'] = userid
+			newdic['timeBatch'] = timebatch
+			newdic['UserHomePageId'] = _id
+			newdic['flag'] = flag
+			dbo2.coll.insert(newdic)
+			dbo1.coll.update({'userId': userid} ,{'$set': {str(carwlerflag): 1 } }, multi = True)
+		log('get_users_follow_pages', 'userid: ' + str(userid) + ' pageid: ' + str(pageid) + ' flag: ' + flag)
+	return
+
+def main():
+	http_request = get_request()
+	dbo1 = dboperator.Dboperator(collname = 'UserHomePages')
+	dbo2 = dboperator.Dboperator(collname = 'UserRelationPages')
+	get_users_follow_pages(http_request, dbo1, dbo2, 'follower')
+	get_users_follow_pages(http_request, dbo1, dbo2, 'followee')
+	dbo1.connclose()
+	dbo2.connclose()
+main()
+

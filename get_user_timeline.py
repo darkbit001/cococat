@@ -83,7 +83,7 @@ def cal_page_num(weibonum, page_num_upper_bound):
 def get_user_timeline_pages(http_request, dbo_userpages, dbo_timelinepages, end_page_num = 10):
 	dbo1 = dbo_userpages
 	dbo2 = dbo_timelinepages
-	pid_cursor = dbo1.coll.find({},{'crawled': 1, 'pageId': 1, 'userId': 1, 'weiboNum': 1})
+	pid_cursor = dbo1.coll.find({},{'timelineCrawled': 1, 'pageId': 1, 'userId': 1, 'weiboNum': 1})
 	timebatch = datetime.datetime.now().timestamp()
 	for user in pid_cursor:
 		_id = user['_id']
@@ -93,7 +93,7 @@ def get_user_timeline_pages(http_request, dbo_userpages, dbo_timelinepages, end_
 		# print(user.get('weiboNum', -1))
 		# return
 		weibonum = int(user.get('weiboNum', -1))
-		crawled = int(user.get('crawled', 0))
+		crawled = int(user.get('timelineCrawled', 0))
 		if crawled == 1:
 			continue
 		if pageid == -1 or pageid == '':
@@ -114,6 +114,7 @@ def get_user_timeline_pages(http_request, dbo_userpages, dbo_timelinepages, end_
 			timelinedict['timeBatch'] = timebatch
 			timelinedict['userHomePageId'] = _id
 			dbo2.coll.insert(timelinedict)
+			dbo1.coll.update({'userid': userid} ,{'$set': {'timelineCrawled': 1 } }, multi = True)
 			del timelinedict
 		log('get_user_timeline_pages', 'userid: ' + str(userid) + 'pageid: ' + str(pageid))
 

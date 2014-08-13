@@ -20,6 +20,7 @@ def crawler_pages(http_request, dbo_userpages, dbo_userclawer):
 	up = weibo_struct.UserHomePage()
 	urls = dbo_userclawer.coll.find({},{'crawled': 1, 'href': 1})
 	# urls = dbo_userclawer.coll.find({'href': 'http://weibo.com/u/3867395827'},{'crawled': 1, 'href': 1})
+	timebatch = datetime.datetime.now().timestamp()
 	for url in urls:
 		if int(url.get('crawled', 0)) == 1:
 			continue
@@ -35,6 +36,7 @@ def crawler_pages(http_request, dbo_userpages, dbo_userclawer):
 			up.crawlertime = datetime.datetime.now().timestamp()
 			upd = up.getdict()
 			upd['nickId'] = url['_id']
+			upd['timeBatch'] = timebatch
 			dbo_userpages.insert(upd)
 			dbo_userclawer.coll.update({'href': url['href']} ,{'$set': {'crawled': 1 } }, multi = True)
 			log('crawler page', url['href'])
