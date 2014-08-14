@@ -30,14 +30,16 @@ def get_domain(pageid, userid):
 	return pageid.replace(userid, '')
 	
 def __crawl_each_timeline_page(http_request, para_dict):
-	sleeptime = random.randint(3,8)
+	sleeptime = random.randint(3,5)
 	log('Ready to get each json data. Just have a rest', 'sleeptime: ' + str(sleeptime))
 	time.sleep(sleeptime)		
 	json_urlstr = 'http://weibo.com/p/aj/mblog/mbloglist?domain=%(domain)s&pre_page=%(prePage)s&page=%(page)s&pagebar=%(pageBar)s&id=%(pageId)s' % (para_dict)
 	jsonstr = http_request.get(json_urlstr)
 	para_dict['pageUrl'] = json_urlstr
 	para_dict['htmlStr'] = jsonstr
-	return
+	returndic = {}
+	returndic.update(para_dict)
+	return returndic
 
 def crawl_timeline_pages(http_request, userid, pageid, end_page_num):
 	'''
@@ -58,20 +60,17 @@ def crawl_timeline_pages(http_request, userid, pageid, end_page_num):
 		para_dict['prePage'] = 0
 		para_dict['pageBar'] = 0
 		para_dict['crawlerTime'] = datetime.datetime.now().timestamp()
-		__crawl_each_timeline_page(http_request, para_dict)
-		user_timeline_pages.append(para_dict)
+		user_timeline_pages.append(__crawl_each_timeline_page(http_request, para_dict))
 		#url para : page_id = default, page = page, pre_page = page, pagebar = 0
 		para_dict['prePage'] = page
 		para_dict['crawlerTime'] = datetime.datetime.now().timestamp()
-		__crawl_each_timeline_page(http_request, para_dict)
-		user_timeline_pages.append(para_dict)
+		user_timeline_pages.append(__crawl_each_timeline_page(http_request, para_dict))
 
 		#url para : page_id = default, page = page, pre_page = page, pagebar = 1
 		para_dict['pageBar'] = 1
 		para_dict['crawlerTime'] = datetime.datetime.now().timestamp()
-		__crawl_each_timeline_page(http_request, para_dict)
 		#log('Url para','Page: ' + str(page) + ' len(jsondata[\'timeline_page\']) : ' + str(len(jsondata['timeline_page'])))
-		user_timeline_pages.append(para_dict)
+		user_timeline_pages.append(__crawl_each_timeline_page(http_request, para_dict))
 
 	return user_timeline_pages
 def cal_page_num(weibonum, page_num_upper_bound):
@@ -100,7 +99,7 @@ def get_user_timeline_pages(http_request, dbo_userpages, dbo_timelinepages, end_
 		if weibonum == -1:
 			continue
 		tlp = weibo_struct.TimelinePage(userid = userid, pageid = pageid)
-		end_page_num = cal_page_num(weibonum, 10) # get the first 10 timeline page
+		end_page_num = cal_page_num(weibonum, end_page_num) # get the first 10 timeline page
 		user_timeline_pages = crawl_timeline_pages(http_request, userid, pageid, end_page_num)
 		for timeline in user_timeline_pages:
 			tlp.page = timeline['page']
@@ -119,9 +118,12 @@ def get_user_timeline_pages(http_request, dbo_userpages, dbo_timelinepages, end_
 
 def main():
 	http_request = get_request()
-	dbo1 = dboperator.Dboperator(collname = 'UserHomePages')
-	dbo2 = dboperator.Dboperator(collname = 'UserTimelinePages')
-	get_user_timeline_pages(http_request, dbo1, dbo2, end_page_num = 10)
+	# dbo1 = dboperator.Dboperator(collname = 'UserHomePages')
+	# dbo2 = dboperator.Dboperator(collname = 'UserTimelinePages')
+	# get_user_timeline_pages(http_request, dbo1, dbo2, end_page_num = 10)
+	dbo1 = dboperator.Dboperator(collname = 'temp')
+	dbo2 = dboperator.Dboperator(collname = 'shixuewen')
+	get_user_timeline_pages(http_request, dbo1, dbo2, end_page_num = 20)
 	dbo1.connclose()
 	dbo2.connclose()
 main()
