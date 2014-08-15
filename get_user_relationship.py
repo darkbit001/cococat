@@ -26,7 +26,7 @@ def crawl_follow_page(http_request, para_dict, flag = 'follower'):
 		follower list http://weibo.com/p/1005051330747684/follow?pids=Pl_Official_LeftHisRelation&page=1&ajaxpagelet=1&relate=fans	
 	'''
 	returndic = {}
-	sleeptime = random.randint(3,8)	
+	sleeptime = random.randint(5,10)
 	log('get_user_following_html sleeptime', sleeptime)
 	time.sleep(sleeptime)
 	# url = ''
