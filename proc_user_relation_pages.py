@@ -24,18 +24,22 @@ def user_info_parser(action_data):
 	return uid, nickName, gender
 	
 def from_parser(tag):
-	# pattern = re.compile(r'通过<a href="(.+?)" class="S_link2" >(.+?)</a>')
-	print(tag.find_all('a', class_='S_link2'))
-	return
-	
+	# pattern = re.compile(r'通过<a.*?href=\"(.+?)\".*?\" >(.+?)</a>关注')
+	fromdiv = tag.find_all('div', class_='from W_textb')
+	div = fromdiv[0]
+	fromUrl = div.a['href']
+	fromText = div.a.string
+	return fromUrl, fromText
+
 def main():
 	dbo1 = dboperator.Dboperator(collname = 'UserRelationPages')
-	cursor = dbo1.coll.find({'userId': '2920092522'}, {'htmlStr': 1}).limit(1)
+	cursor = dbo1.coll.find({'userId': '3966377238'}, {'htmlStr': 1}).limit(1)
 	html = load_json(cursor[0]['htmlStr'])
+	# print(html)
 	s = Soup(html = html)	
 	tags = s.li()
 	for tag in tags:
 		userId, nickName, gender = user_info_parser(tag['action-data'])
-		from_parser(tag)
+		fromUrl, fromText = from_parser(tag)
 	dbo1.connclose()
 main()
