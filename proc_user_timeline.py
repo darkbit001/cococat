@@ -39,6 +39,7 @@ def __find_child_attr(attr_name, text):
 			return pattern_rm.findall(text)[0]
 		else:
 			return None
+
 def __weibo_struct_extract(feed_div_Tag, weibo_dict):
 	'''
 	input
@@ -59,7 +60,6 @@ def __weibo_struct_extract(feed_div_Tag, weibo_dict):
 
 	if div.has_attr('isforward'):
 		weibo_dict['isforward'] = div['isforward']
-		#print('has_attr isforward   '+str(weibo_dict['isforward']))
 	else:
 		weibo_dict['isforward'] = None
 
@@ -78,19 +78,14 @@ def __weibo_struct_extract(feed_div_Tag, weibo_dict):
 	content_div = div_soup('div', attrs = {'class':'WB_text', 'node-type':'feed_list_content'})[0]	
 	__weibo_text_extract(content_div, weibo_dict)
 	weibo_from_div_Tag = div_soup('div', attrs = {'class':'WB_from'})
-	
-	#log('len',len(weibo_from_div_Tag))
 	if len(weibo_from_div_Tag) > 2:
-		#if len > 2, this may not a normal weibo. may be ad!
 		weibo_dict['WB_from'] = None
 		return 
 	for w in weibo_from_div_Tag:
-		#log('index',weibo_from_div_Tag.index(w))
 		try:
 			if w.parent.parent['class'][0] == 'WB_detail':
 				__weibo_from_extract(w, weibo_dict)
 		except:
-			#log('error',weibo_from_div_Tag.index(w))
 			continue
 	#获得转发的微博正文
 	try:
@@ -113,6 +108,7 @@ def __weibo_text_extract(text_div_Tag, weibo_dict, isforward = False):
 		weibo_dict['original_content'] = text_div_Tag.get_text()
 
 	return weibo_dict
+
 def __weibo_from_extract(from_div_Tag, weibo_dict, isforward = False):
 	'''
 	Extract weibo_from weibo_from_href from class='WB_from' div Tag
@@ -140,6 +136,7 @@ def __weibo_from_extract(from_div_Tag, weibo_dict, isforward = False):
 		weibo_dict['original_from'] = from_string
 
 	return weibo_dict
+
 def weibo_file_parse(weibo_content_str):
 	'''
 	input:
@@ -150,17 +147,8 @@ def weibo_file_parse(weibo_content_str):
 			user_info
 			weibo_content_list
 	'''
-
-	#----weibo_content_list_raw = weibo_content_str.split('=+=+=\n')	
-	#----if len(weibo_content_list_raw)<3:
-	#----	weibo_content_list_raw = weibo_content_str.split('<!--break-->')
-	#---- The lines has ----mark is contributed in the page files before
-	#JUST INGORE!!
-
 	weibo_content_list = []
-	#----for weibo in weibo_content_list_raw:
 	soup = BeautifulSoup(weibo_content_str)
-	#print(str(weibo_content_list.index(weibo)))
 	results = soup('div', attrs = {'class':'WB_feed_type SW_fun S_line2 '})
 	for div in results:
 		'''
@@ -168,27 +156,30 @@ def weibo_file_parse(weibo_content_str):
 		'''
 		weibo_dict = {}
 		__weibo_struct_extract(div, weibo_dict)
-		#log('weibo_dict', repr(weibo_dict))
-		#json编码
-		#print(json.dumps(weibo_dict, sort_keys=True, indent=4 * ' '))
-		#print(div.prettify())
-		#print(repr(weibo_dict))
-		#weibo_dict_json = json.JSONEncoder().encode(weibo_dict)
 		weibo_content_list.append(weibo_dict)
 		del weibo_dict
 	
 	return weibo_content_list
 
-
-dbo = dboperator.Dboperator(collname = 'shixuewen')
-dbo2 = dboperator.Dboperator(collname = 'shixuewen2')
-
-cursor = dbo.coll.find({})
-for user in cursor:
-	htmlstr = user['htmlStr']
-	data = load_json(htmlstr)
-	weibo_list = weibo_file_parse(data)
-	for weibo in weibo_list:
-		dbo2.coll.insert(weibo)
-dbo.connclose()
-dbo2.connclose()
+def main():
+	dbo = dboperator.Dboperator(collname = 'UserTimelinePages')
+	dbo2 = dboperator.Dboperator(collname = 'UserTimelines')
+	cursor = dbo.coll.find({},{'htmlStr': 1, 'userId': 1})
+	page_list = list(cursor)
+	print(len(page_list))
+	i = 1
+	for page in page_list:
+		htmlstr = page['htmlStr']
+		data = load_json(htmlstr)
+		weibo_list = weibo_file_parse(data)
+		for weibo in weibo_list:
+			mid = weibo['mid']
+			# if dbo2.coll.find({'mid': mid},{'mid': 1}).count() > 0:
+			#	continue
+			dbo2.coll.update({'mid': mid}, {'$set': weibo}, upsert = True)
+		print(i)
+		i +=1
+	dbo.connclose()
+	dbo2.connclose()
+	
+main()
