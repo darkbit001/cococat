@@ -30,16 +30,48 @@ def from_parser(tag):
 	fromUrl = div.a['href']
 	fromText = div.a.string
 	return fromUrl, fromText
-
-def main():
-	dbo1 = dboperator.Dboperator(collname = 'UserRelationPages')
-	cursor = dbo1.coll.find({'userId': '3966377238'}, {'htmlStr': 1}).limit(1)
-	html = load_json(cursor[0]['htmlStr'])
-	# print(html)
+	
+def parse_follow_list(html):
 	s = Soup(html = html)	
 	tags = s.li()
+	follow_list = []
 	for tag in tags:
-		userId, nickName, gender = user_info_parser(tag['action-data'])
-		fromUrl, fromText = from_parser(tag)
+		relation_dict = {}
+		
+		try:
+			userId, nickName, gender = user_info_parser(tag['action-data'])
+			relation_dict['userId'] = userId
+			relation_dict['nickName'] = nickName
+			relation_dict['gender'] = gender
+		except:
+			relation_dict['userId'] = -1
+			relation_dict['nickName'] = -1
+			relation_dict['gender'] = -1
+		
+		try:
+			fromUrl, fromText = from_parser(tag)
+			relation_dict['fromUrl'] = fromUrl
+			relation_dict['fromText'] = fromText	
+		except:
+			relation_dict['fromUrl'] = -1
+			relation_dict['fromText'] = -1
+			
+		follow_list.append(relation_dict)
+		del relation_dict
+	return follow_list
+def map_follow_list(follow_list, userId, flag):
+	if flag == 'follower':
+		
+
+def main():
+	dbo1 = dboperator.Dboperator(collname = 'UserRelationPages2')
+	cursor = dbo1.coll.find({}, {'htmlStr': 1, 'userId': 1, 'flag': 1})
+	for page in cursor:
+		flag = page['flag']
+		userId = page['userId']
+		html = load_json(page['htmlStr'])
+		# print(html)
+		follow_list = parse_follow_list(html)
+			relation
 	dbo1.connclose()
 main()
