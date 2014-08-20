@@ -6,8 +6,9 @@ from weibocrawler import dboperator
 def load_json(htmlStr):
 	pattern = re.compile(r'<script>parent.FM.view\((.+)\)</script>')
 	json_data = pattern.findall(htmlStr)[0]
-	jsondic = json.loads(json_data)
-	return jsondic.get('html', -1)
+	jsondic = json.loads(json_data)	
+	html = jsondic.get('html')
+	return html
 class Soup():
 	html = ''
 	def __init__(self, **para):
@@ -36,7 +37,7 @@ def parse_follow_list(html):
 	tags = s.li()
 	follow_list = []
 	for tag in tags:
-		relation_dict = {}
+		relation_dict = {} # keys: userId, nickName, gender, fromUrl, fromText
 		
 		try:
 			userId, nickName, gender = user_info_parser(tag['action-data'])
@@ -56,22 +57,80 @@ def parse_follow_list(html):
 			relation_dict['fromUrl'] = -1
 			relation_dict['fromText'] = -1
 			
-		follow_list.append(relation_dict)
+		follow_list.append(relation_dict) # [relation_dict1, relation_dict2]
 		del relation_dict
 	return follow_list
+
+def map_follower_list(follow_list, userId): # follow_list is the followers group of userId
+	relation_list = []	
+	for user in follow_list:
+		re_dict = {}
+		re_dict.update(user)
+		re_dict['followeeId'] = userId
+		relation_list.append(re_dict)
+		del re_dict
+	return relation_list
+
+def map_followee_list(follow_list, userId):	# follow_list is the followee group of userId
+	relation_list = []	
+	for user in follow_list:
+		re_dict = {}
+		re_dict.update(user)
+		re_dict['followeeId'] = re_dict['userId']
+		re_dict['userId'] = userId
+		relation_list.append(re_dict)
+		del re_dict
+	return relation_list
 def map_follow_list(follow_list, userId, flag):
 	if flag == 'follower':
-		
+		return map_follower_list(follow_list, userId)
+	elif flag == 'following':
+		return map_followee_list(follow_list, userId)
 
-def main():
-	dbo1 = dboperator.Dboperator(collname = 'UserRelationPages2')
-	cursor = dbo1.coll.find({}, {'htmlStr': 1, 'userId': 1, 'flag': 1})
+def update_crawler(dbo_UserHomePages, userId, flag, value):
+	if flag == 'follower':
+		dbo_UserHomePages.coll.update({'userId': userId}, {'$set':{'followerCrawler': value}}, multi = True)
+	elif flag == 'followee':
+		dbo_UserHomePages.coll.update({'userId': userId}, {'$set':{'followeeCrawler': value}}, multi = True)
+
+def parse_relation_pages(dbo1, dbo2, dbo3):	
+	cursor = dbo1.coll.find({}, {'htmlStr': 1, 'userId': 1, 'flag': 1, 'pageUrl': 1})
 	for page in cursor:
 		flag = page['flag']
 		userId = page['userId']
-		html = load_json(page['htmlStr'])
+		try:
+			html = load_json(page['htmlStr'])
+		except:
+			# crawler error
+			update_crawler(dbo3, userId, flag, 0)			
+			print(userId + '\t' + flag)
+			continue
 		# print(html)
 		follow_list = parse_follow_list(html)
-			relation
+		relation_list = map_follow_list(follow_list, userId, flag)
+		if len(relation_list) == 0:
+			# relation page has none user
+			print(userId)
+			print(page['pageUrl'])
+			print(page['htmlStr'])
+			continue
+
+		for r in relation_list:
+			# userId = r['userId']
+			# followeeId = r['followeeId']
+			dbo2.coll.update({'userId': r['userId'], 'followeeId': r['followeeId']}, {'$set': r}, upsert = True)
+
+
+def main():
+	dbo1 = dboperator.Dboperator(collname = 'UserRelationPages')
+	dbo2 = dboperator.Dboperator(collname = 'UserRelations')
+	dbo3 = dboperator.Dboperator(collname = 'UserHomePages')
+	parse_relation_pages(dbo1, dbo2, dbo3)
+	dbo3.connclose()
+	dbo2.connclose()
 	dbo1.connclose()
+
 main()
+
+
+
