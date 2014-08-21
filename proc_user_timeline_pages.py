@@ -13,10 +13,13 @@ def tbinfo_parser(string):
 	pattern = re.compile(r'ouid=(\d+)&?[a-z]{0,5}=?(\d*)')
 	ouid, rouid = pattern.findall(str(string))[0]
 	return ouid, rouid
-def minfo_parser(string):
-	pattern = re.compile(r'ru=\d+&rm=(\d+))')
-	ru = pattern.findall(str(string))[0]
-	return ru
+
+# def minfo_parser(string):
+# 	rm = ''
+# 	pattern = re.compile(r'ru=\d+&rm=(\d+)')
+# 	if pattern.search(str(string)) != None:
+# 		rm = pattern.findall(str(string))[0]
+# 	return rm
 
 def time_from_parser(div):
 	div = div.find('div', 'WB_from')
@@ -51,10 +54,12 @@ def parse_timeline(div):
 	mid, tbInfo, mInfo, isForward, omid = info_parser(div)
 	date, dateFormart, fromUrl, fromText = time_from_parser(div)
 	text = content_parser(div)
+	ouid, rouid = tbinfo_parser(tbInfo)
 	timeline_dic = dict(
 		zip(
-			['mid', 'tbInfo', 'mInfo', 'isForward', 'omid', 'date', 'dateFormart', 'fromUrl', 'fromText', 'text'],
-			[mid, tbInfo, mInfo, isForward, omid, date, dateFormart, fromUrl, fromText, text]))
+			['mId', 'tbInfo', 'mInfo', 'isForward', 'oMId', 'date', 'dateFormart', 'fromUrl', 'fromText', 'text', 'userId', 'oUserId'],
+			[mid, tbInfo, mInfo, isForward, omid, date, dateFormart, fromUrl, fromText, text, ouid, rouid]))
+	print(timeline_dic)
 	return timeline_dic
 
 def forward_weibo_parser(div):
@@ -69,29 +74,28 @@ def parse_forward(forward_div):
 			['oText', 'oDate', 'oDateFormart', 'oFromUrl', 'oFromText'],
 			[text, date, dateFormart, fromUrl, fromText]))
 	return forward_dic
-
 def parse_timeline_full(div):
 	timeline_dic = parse_timeline(div)
 	if timeline_dic['isForward'] == 1:
 		forward_div = forward_weibo_parser(div)
-		timeline_dic['forward'] = parse_forward(forward)
-
+		forward_dic = parse_forward(forward_div)
+		timeline_dic.update(forward_dic)
+	return timeline_dic
 def main():
 	log('main', 'running')
 	dbo = dboperator.Dboperator(collname = 'UserTimelinePages')
-	# dbo2 = dboperator.Dboperator(collname = 'UserTimelines')
-	cursor = dbo.coll.find({},{'htmlStr': 1, 'userId': 1}).limit(20)
+	dbo2 = dboperator.Dboperator(collname = 'UserTimelines')
+	cursor = dbo.coll.find({},{'htmlStr': 1, 'userId': 1}).limit(100)
 	for c in cursor:
 		data = load_json(c['htmlStr'])
 		tags = divs_parser(data)
-
 		for tag in tags:
-			mid, tbInfo, mInfo, isForward, omid = info_parser(tag)
-			print(tbinfo_parser(tbInfo))
+			timeline_dic = parse_timeline_full(tag)
+			mid = timeline_dic['mId']
+			dbo2.coll.update({'mId': mid}, {'$set': timeline_dic}, upsert = True)
 
 	dbo.connclose()
+	dbo2.connclose()
 	log('main', 'finished')
-
-	# dbo2.connclose()
 	
 main()
