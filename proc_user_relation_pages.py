@@ -2,7 +2,7 @@ import re
 import json
 from bs4 import BeautifulSoup
 from weibocrawler import dboperator
-
+from weibocrawler import log
 def load_json(htmlStr):
 	pattern = re.compile(r'<script>parent.FM.view\((.+)\)</script>')
 	json_data = pattern.findall(htmlStr)[0]
@@ -84,14 +84,14 @@ def map_followee_list(follow_list, userId):	# follow_list is the followee group 
 def map_follow_list(follow_list, userId, flag):
 	if flag == 'follower':
 		return map_follower_list(follow_list, userId)
-	elif flag == 'following':
+	elif flag == 'followee':
 		return map_followee_list(follow_list, userId)
 
 def update_crawler(dbo_UserHomePages, userId, flag, value):
 	if flag == 'follower':
-		dbo_UserHomePages.coll.update({'userId': userId}, {'$set':{'followerCrawler': value}}, multi = True)
+		dbo_UserHomePages.coll.update({'userId': userId}, {'$set':{'followerCrawled': value}}, multi = True)
 	elif flag == 'followee':
-		dbo_UserHomePages.coll.update({'userId': userId}, {'$set':{'followeeCrawler': value}}, multi = True)
+		dbo_UserHomePages.coll.update({'userId': userId}, {'$set':{'followeeCrawled': value}}, multi = True)
 
 def parse_relation_pages(dbo1, dbo2, dbo3):	
 	cursor = dbo1.coll.find({}, {'htmlStr': 1, 'userId': 1, 'flag': 1, 'pageUrl': 1})
@@ -103,18 +103,19 @@ def parse_relation_pages(dbo1, dbo2, dbo3):
 		except:
 			# crawler error
 			update_crawler(dbo3, userId, flag, 0)			
-			print(userId + '\t' + flag)
+			log('Json load error', userId + '\t' + flag)
 			continue
 		# print(html)
 		follow_list = parse_follow_list(html)
 		relation_list = map_follow_list(follow_list, userId, flag)
+		# try:
 		if len(relation_list) == 0:
-			# relation page has none user
-			print(userId)
-			print(page['pageUrl'])
-			print(page['htmlStr'])
+			log('relation page has none user', userId)
 			continue
-
+		# except:
+		# 	print(userId)
+		# 	print(page['pageUrl'])
+		# 	print(page['htmlStr'])
 		for r in relation_list:
 			# userId = r['userId']
 			# followeeId = r['followeeId']
@@ -129,7 +130,7 @@ def main():
 	dbo3.connclose()
 	dbo2.connclose()
 	dbo1.connclose()
-
+	log('proc_user_relation_pages.py', 'Finished')
 main()
 
 

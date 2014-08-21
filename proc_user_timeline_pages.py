@@ -2,10 +2,12 @@ import re
 import json
 from bs4 import BeautifulSoup
 from weibocrawler import dboperator
+from weibocrawler import log
 
 def load_json(htmlstr):
 	jsondict = json.loads(htmlstr)
-	return jsondict.get('data', -1)
+	data = jsondict.get('data')
+	return data
 def __find_child_attr(attr_name, text):
 	'''
 	attr_name 
@@ -137,49 +139,65 @@ def __weibo_from_extract(from_div_Tag, weibo_dict, isforward = False):
 
 	return weibo_dict
 
-def weibo_file_parse(weibo_content_str):
-	'''
-	input:
-		微博文件字符串
-	ouput:
-		微博内容词典 编码后
-		timeline_dict
-			user_info
-			weibo_content_list
-	'''
-	weibo_content_list = []
-	soup = BeautifulSoup(weibo_content_str)
-	results = soup('div', attrs = {'class':'WB_feed_type SW_fun S_line2 '})
-	for div in results:
-		'''
-		获得微博基本信息weibo_info_dict
-		'''
-		weibo_dict = {}
-		__weibo_struct_extract(div, weibo_dict)
-		weibo_content_list.append(weibo_dict)
-		del weibo_dict
-	
-	return weibo_content_list
+def divs_parser(data):
+	# list1 = []
+	soup = BeautifulSoup(data)
+	tags = soup('div', class_ = 'WB_feed_type SW_fun S_line2 ')
+	# for i in range(len(tags)):
+		# list1.append(tags[i].extract())
+	return tags
+
+def time_from_parser(div):
+	div = div.find('div', 'WB_from')
+	a1 = div.a
+	a2 = a1.find_next_sibling('a')
+	date = a1.get('date', -1)
+	dateFormart = a1.get('title', -1)
+	fromUrl = a2.get('href')
+	fromText = a2.string
+	return date, dateFormart, fromUrl, fromText
+
+def info_parser(div):
+	mid = div.get('mid', -1)
+	tbInfo = div.get('tbinfo', -1)
+	mInfo = div.get('minfo', -1)
+	isForward = div.get('isforward', -1)
+	omid = div.get('omid', -1)
+	return mid, tbInfo, mInfo, isForward, omid
+
+def content_parser(div):
+	div = div.find('div', class_ = 'WB_text')
+	text = div.get_text(strip = True)
+	return text
 
 def main():
+	log('main', 'running')
 	dbo = dboperator.Dboperator(collname = 'UserTimelinePages')
-	dbo2 = dboperator.Dboperator(collname = 'UserTimelines')
-	cursor = dbo.coll.find({},{'htmlStr': 1, 'userId': 1})
-	page_list = list(cursor)
-	print(len(page_list))
-	i = 1
-	for page in page_list:
-		htmlstr = page['htmlStr']
-		data = load_json(htmlstr)
-		weibo_list = weibo_file_parse(data)
-		for weibo in weibo_list:
-			mid = weibo['mid']
-			# if dbo2.coll.find({'mid': mid},{'mid': 1}).count() > 0:
-			#	continue
-			dbo2.coll.update({'mid': mid}, {'$set': weibo}, upsert = True)
-		print(i)
-		i +=1
+	# dbo2 = dboperator.Dboperator(collname = 'UserTimelines')
+	cursor = dbo.coll.find({},{'htmlStr': 1, 'userId': 1}).limit(100)
+	for c in cursor:
+		data = load_json(c['htmlStr'])
+		tags = divs_parser(data)
+		# tag = tags[3]
+		for tag in tags:
+			content_parser(tag)
+		# page_list = list(cursor)
+		# print(len(page_list))
+		# i = 1
+		# for page in page_list:
+		# 	htmlstr = page['htmlStr']
+		# 	data = load_json(htmlstr)
+		# 	weibo_list = weibo_file_parse(data)
+		# 	for weibo in weibo_list:
+		# 		mid = weibo['mid']
+		# 		# if dbo2.coll.find({'mid': mid},{'mid': 1}).count() > 0:
+		# 		#	continue
+		# 		dbo2.coll.update({'mid': mid}, {'$set': weibo}, upsert = True)
+		# 	print(i)
+		# 	i +=1
 	dbo.connclose()
-	dbo2.connclose()
+	log('main', 'finished')
+
+	# dbo2.connclose()
 	
 main()
