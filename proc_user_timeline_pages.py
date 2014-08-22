@@ -59,7 +59,6 @@ def parse_timeline(div):
 		zip(
 			['mId', 'tbInfo', 'mInfo', 'isForward', 'oMId', 'date', 'dateFormart', 'fromUrl', 'fromText', 'text', 'userId', 'oUserId'],
 			[mid, tbInfo, mInfo, isForward, omid, date, dateFormart, fromUrl, fromText, text, ouid, rouid]))
-	print(timeline_dic)
 	return timeline_dic
 
 def forward_weibo_parser(div):
@@ -81,11 +80,11 @@ def parse_timeline_full(div):
 		forward_dic = parse_forward(forward_div)
 		timeline_dic.update(forward_dic)
 	return timeline_dic
-def main():
-	log('main', 'running')
-	dbo = dboperator.Dboperator(collname = 'UserTimelinePages')
-	dbo2 = dboperator.Dboperator(collname = 'UserTimelines')
-	cursor = dbo.coll.find({},{'htmlStr': 1, 'userId': 1}).limit(100)
+
+def parse_user_timeline_pages(dbo_UserTimelinePages, dbo_UserTimelines):
+	dbo = dbo_UserTimelinePages
+	dbo2 = dbo_UserTimelines
+	cursor = dbo.coll.find({},{'htmlStr': 1, 'userId': 1})
 	for c in cursor:
 		data = load_json(c['htmlStr'])
 		tags = divs_parser(data)
@@ -93,9 +92,12 @@ def main():
 			timeline_dic = parse_timeline_full(tag)
 			mid = timeline_dic['mId']
 			dbo2.coll.update({'mId': mid}, {'$set': timeline_dic}, upsert = True)
-
+def main():
+	log('parse_user_timeline_pages', 'running')
+	dbo = dboperator.Dboperator(collname = 'UserTimelinePages')
+	dbo2 = dboperator.Dboperator(collname = 'UserTimelines')
+	parse_user_timeline_pages(dbo, dbo2)
 	dbo.connclose()
 	dbo2.connclose()
-	log('main', 'finished')
-	
+	log('parse_user_timeline_pages', 'finished')
 main()
