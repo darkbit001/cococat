@@ -22,13 +22,17 @@ def tbinfo_parser(string):
 # 	return rm
 
 def time_from_parser(div):
+	fromUrl = ''
+	fromText = '未通过审核应用'
 	div = div.find('div', 'WB_from')
 	a1 = div.a
-	a2 = a1.find_next_sibling('a')
 	date = a1.get('date', -1)
 	dateFormart = a1.get('title', -1)
-	fromUrl = a2.get('href')
-	fromText = a2.string
+	a2 = a1.find_next_sibling('a')
+	if a2 != None:
+		fromUrl = a2.get('href')
+		fromText = a2.string
+
 	return date, dateFormart, fromUrl, fromText
 
 def content_parser(div):
@@ -46,7 +50,7 @@ def info_parser(div):
 
 
 def divs_parser(data):
-	soup = BeautifulSoup(data)
+	soup = BeautifulSoup(data, 'lxml')
 	tags = soup('div', class_ = 'WB_feed_type SW_fun S_line2 ')
 	return tags
 
@@ -84,14 +88,26 @@ def parse_timeline_full(div):
 def parse_user_timeline_pages(dbo_UserTimelinePages, dbo_UserTimelines):
 	dbo = dbo_UserTimelinePages
 	dbo2 = dbo_UserTimelines
-	cursor = dbo.coll.find({},{'htmlStr': 1, 'userId': 1})
+	cursor = dbo.coll.find({},{'htmlStr': 1, 'userId': 1, 'pageUrl': 1})
+	i = 0
 	for c in cursor:
+		if i%200 == 0:
+			log('counter', str(i))
 		data = load_json(c['htmlStr'])
 		tags = divs_parser(data)
 		for tag in tags:
-			timeline_dic = parse_timeline_full(tag)
+			try:
+				timeline_dic = parse_timeline_full(tag)
+			except:
+				print(data)
+				print(tag)
+				print(c['userId'])
+				print(c['pageUrl'])
+				raise
+			# print(timeline_dic)
 			mid = timeline_dic['mId']
 			dbo2.coll.update({'mId': mid}, {'$set': timeline_dic}, upsert = True)
+		i += 1
 def main():
 	log('parse_user_timeline_pages', 'running')
 	dbo = dboperator.Dboperator(collname = 'UserTimelinePages')
