@@ -14,13 +14,6 @@ def tbinfo_parser(string):
 	ouid, rouid = pattern.findall(str(string))[0]
 	return ouid, rouid
 
-# def minfo_parser(string):
-# 	rm = ''
-# 	pattern = re.compile(r'ru=\d+&rm=(\d+)')
-# 	if pattern.search(str(string)) != None:
-# 		rm = pattern.findall(str(string))[0]
-# 	return rm
-
 def time_from_parser(div):
 	fromUrl = ''
 	fromText = '未通过审核应用'
@@ -47,7 +40,6 @@ def info_parser(div):
 	isForward = div.get('isforward', -1)
 	omid = div.get('omid', -1)
 	return mid, tbInfo, mInfo, isForward, omid
-
 
 def divs_parser(data):
 	soup = BeautifulSoup(data, 'lxml')
@@ -77,6 +69,7 @@ def parse_forward(forward_div):
 			['oText', 'oDate', 'oDateFormart', 'oFromUrl', 'oFromText'],
 			[text, date, dateFormart, fromUrl, fromText]))
 	return forward_dic
+
 def parse_timeline_full(div):
 	timeline_dic = parse_timeline(div)
 	if timeline_dic['isForward'] == 1:
@@ -89,25 +82,28 @@ def parse_user_timeline_pages(dbo_UserTimelinePages, dbo_UserTimelines):
 	dbo = dbo_UserTimelinePages
 	dbo2 = dbo_UserTimelines
 	cursor = dbo.coll.find({},{'htmlStr': 1, 'userId': 1, 'pageUrl': 1})
-	i = 0
+	cursor2 = dbo2.coll.distinct('mId')
+	counter = 0
 	for c in cursor:
-		if i%200 == 0:
-			log('counter', str(i))
-		data = load_json(c['htmlStr'])
-		tags = divs_parser(data)
+		if counter%200 == 0:
+			log('counter', str(counter))
+		try:
+			data = load_json(c['htmlStr'])
+		except:
+			continue
+		try:
+			tags = divs_parser(data)
+		except:
+			continue
 		for tag in tags:
-			try:
-				timeline_dic = parse_timeline_full(tag)
-			except:
-				print(data)
-				print(tag)
-				print(c['userId'])
-				print(c['pageUrl'])
-				raise
+			timeline_dic = parse_timeline_full(tag)
 			# print(timeline_dic)
 			mid = timeline_dic['mId']
-			dbo2.coll.update({'mId': mid}, {'$set': timeline_dic}, upsert = True)
-		i += 1
+			# result = dbo2.coll.find({'mId': mid}, {'mId': 1}).count()
+			if mid in cursor2:
+				continue
+			dbo2.coll.insert(timeline_dic)
+		counter += 1
 def main():
 	log('parse_user_timeline_pages', 'running')
 	dbo = dboperator.Dboperator(collname = 'UserTimelinePages')

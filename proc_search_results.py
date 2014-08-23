@@ -9,8 +9,7 @@
 import json
 from bs4 import BeautifulSoup
 from weibocrawler import dboperator
-from weibocrawler import weibo_struct
-
+from weibocrawler import log
 
 def content_html_parser(htmlbody):
 	'''
@@ -44,60 +43,44 @@ def nick_parser(content):
 		namedict['nick-name'] = nick_name
 		namedict['title'] = title
 		nicklist.append(namedict)
-		#print(namedict)
-	#print(len(nicklist))
 	return nicklist
 
-def read_search_page(pipline):
-	dbo = dboperator.Dboperator('SearchPages')
+def read_search_page(dbo, pipline):
 	cursor = dbo.coll.find(pipline)
 	# print(dbo.coll.distinct('timeBatch'))
 	pagelist = list(cursor)
-	dbo.connclose()
 	return pagelist
 
-def pagelist_processer(pagelist):
+def search_page_parser(p):
 	nicklist = []
-	for p in pagelist:
-		sp = weibo_struct.SearchPage()
-		sp.setdict(p)
-		htmlstr = p['htmlStr']
-		content = content_html_parser(htmlstr)
-		nicklist_perpage = nick_parser(content)
-		sd = weibo_struct.SeedUser()
-		sd.superSearchPage(sp)
-		sd.searchpageid = p['_id']
-		for n in nicklist_perpage:
-			sd.title = n['title']
-			sd.href = n['href']
-			sd.nickname = n['nick-name']
-			nicklist.append(sd.getdict())
+	htmlstr = p['htmlStr']
+	content = content_html_parser(htmlstr)
+	nicklist_perpage = nick_parser(content)
+	for n in nicklist_perpage:
+		n.update(p)			
+		n['searchPageId'] = n['_id']
+		del n['_id']
+		del n['htmlStr']
+		nicklist.append(n)
 	return nicklist
 
-if __name__ == '__main__':	
-	dbo = dboperator.Dboperator('SearchPages')
-	cursor = dbo.coll.find({},{'timeBatch': 1, 'querystring': 1})
+
+def parse_search_pages(dbo_SearchPages, dbo_Nicks):
+	dbo = dbo_SearchPages
+	dbo2 = dbo_Nicks
+	cursor = dbo.coll.find()
+	cursor2 = dbo2.coll.distinct('href')
+	for page in cursor:
+		nicklist = search_page_parser(page)
+		for nick in nicklist:
+			if nick['href'] not in cursor2: 
+				print(dbo2.insert(nick))
+def main():
+	log('parse_search_pages', 'Running')
+	dbo = dboperator.Dboperator(collname = 'SearchPages')
+	dbo2 = dboperator.Dboperator(collname = 'Nicks')
+	parse_search_pages(dbo, dbo2)
 	dbo.connclose()
-
-	timeBatch = ''
-	querystring = ''
-	
-	dbo2 = dboperator.Dboperator('Nicks')
-
-	for d in cursor:
-		if timeBatch == d['timeBatch'] and 	querystring == d['querystring']:
-			continue
-		else:
-			timeBatch = d['timeBatch']
-			querystring = d['querystring']
-			pipline = {'timeBatch': timeBatch, 'querystring': querystring}
-			pagelist = read_search_page(pipline)
-			nicklist = pagelist_processer(pagelist)
-			for nick in nicklist:
-				if dbo2.coll.find({'href': nick['href']}).count() != 0: 
-				# To make sure the same href can not be inserted into Nicks
-					continue
-				else:
-					dbo2.insert(nick)
 	dbo2.connclose()
-
+	log('parse_search_pages', 'Finished')
+main()
