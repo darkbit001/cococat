@@ -30,7 +30,7 @@ def get_domain(pageid, userid):
 	return pageid.replace(userid, '')
 	
 def __crawl_each_timeline_page(http_request, para_dict):
-	sleeptime = random.randint(3,5)
+	sleeptime = random.randint(5,10)
 	log('Ready to get each json data. Just have a rest', 'sleeptime: ' + str(sleeptime))
 	time.sleep(sleeptime)		
 	json_urlstr = 'http://weibo.com/p/aj/mblog/mbloglist?domain=%(domain)s&pre_page=%(prePage)s&page=%(page)s&pagebar=%(pageBar)s&id=%(pageId)s' % (para_dict)
@@ -117,13 +117,16 @@ def get_user_timeline_pages(http_request, dbo_userpages, dbo_timelinepages, end_
 		log('get_user_timeline_pages', 'userid: ' + str(userid) + ' pageid: ' + str(pageid))
 
 def main():
-	http_request = get_request()
+	from weibocrawler.config import getconfig
+	cfg = getconfig()
+	Collection_UserHomePages = cfg['Collections']['UserHomePages']
+	Collection_UserTimelinePages = cfg['Collections']['UserTimelinePages']
+	dbo1 = dboperator.Dboperator(collname = Collection_UserHomePages)
+	dbo2 = dboperator.Dboperator(collname = Collection_UserTimelinePages)
 	# dbo1 = dboperator.Dboperator(collname = 'UserHomePages')
 	# dbo2 = dboperator.Dboperator(collname = 'UserTimelinePages')
-	# get_user_timeline_pages(http_request, dbo1, dbo2, end_page_num = 10)
-	dbo1 = dboperator.Dboperator(collname = 'temp')
-	dbo2 = dboperator.Dboperator(collname = 'shixuewen')
-	get_user_timeline_pages(http_request, dbo1, dbo2, end_page_num = 20)
+	http_request = get_request()	
+	get_user_timeline_pages(http_request, dbo1, dbo2, end_page_num = 10)
 	dbo1.connclose()
 	dbo2.connclose()
 main()

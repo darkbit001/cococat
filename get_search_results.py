@@ -120,12 +120,14 @@ def main():
 	Usage:
 
 	'''
-	http_request = get_request()
-	dbo = dboperator.Dboperator(collname = 'SearchPages', port = 27123) # get database connection and the collection is 'SearchPages' ,database make weibo as default
-	queryStrings = 	['test'] # give a query string 'test' to Weibo Search Engine
+	from weibocrawler.config import getconfig
+	cfg = getconfig()
+	Collection_SearchPages = cfg['Collections']['SearchPages']
+	# dbo = dboperator.Dboperator(collname = 'SearchPages', port = 27123) # get database connection and the collection is 'SearchPages' ,database make weibo as default
+	dbo = dboperator.Dboperator(collname = Collection_SearchPages) # use config infor
+	queryStrings = 	['失独'] # give a query string 'test' to Weibo Search Engine
+	http_request = get_request()	
 	crawler_pages(http_request, dbo, queryStrings, 1)
 	dbo.connclose()
 
-if __name__ == '__main__':
-	main()
-
+main()

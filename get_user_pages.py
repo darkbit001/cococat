@@ -53,9 +53,16 @@ def main():
 	'''
 	This function will crawler user page read from collection Nicks and insert them into collection UserHomePages from MongoDB.
 	'''
+	from weibocrawler.config import getconfig
+	cfg = getconfig()
+	Collection_UserHomePages = cfg['Collections']['UserHomePages']
+	Collection_Nicks = cfg['Collections']['Nicks']
+
+	# dbo1 = dboperator.Dboperator(collname = 'UserHomePages') # store: screen_name, page_id, user_id, htmlStr 
+	# dbo2 = dboperator.Dboperator(collname = 'Nicks')
+	dbo1 = dboperator.Dboperator(collname = Collection_UserHomePages) # store: screen_name, page_id, user_id, htmlStr 
+	dbo2 = dboperator.Dboperator(collname = Collection_Nicks)
 	http_request = get_request()
-	dbo1 = dboperator.Dboperator(collname = 'UserHomePages2') # store: screen_name, page_id, user_id, htmlStr 
-	dbo2 = dboperator.Dboperator(collname = 'Nicks2')
 	crawler_pages(http_request, dbo1, dbo2)
 	dbo1.connclose()
 	dbo2.connclose()

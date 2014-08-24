@@ -106,9 +106,15 @@ def parse_user_timeline_pages(dbo_UserTimelinePages, dbo_UserTimelines):
 		counter += 1
 	log('counter', str(counter))
 def main():
+	from weibocrawler.config import getconfig
+	cfg = getconfig()
+	Collection_UserTimelinePages = cfg['Collections']['UserTimelinePages']
+	Collection_UserTimelines = cfg['Collections']['UserTimelines']
 	log('parse_user_timeline_pages', 'Running')
-	dbo = dboperator.Dboperator(collname = 'UserTimelinePages')
-	dbo2 = dboperator.Dboperator(collname = 'UserTimelines')
+	# dbo = dboperator.Dboperator(collname = 'UserTimelinePages')
+	# dbo2 = dboperator.Dboperator(collname = 'UserTimelines')
+	dbo = dboperator.Dboperator(collname = Collection_UserTimelinePages)
+	dbo2 = dboperator.Dboperator(collname = Collection_UserTimelines)
 	parse_user_timeline_pages(dbo, dbo2)
 	dbo.connclose()
 	dbo2.connclose()

@@ -123,9 +123,19 @@ def parse_relation_pages(dbo1, dbo2, dbo3):
 
 
 def main():
-	dbo1 = dboperator.Dboperator(collname = 'UserRelationPages')
-	dbo2 = dboperator.Dboperator(collname = 'UserRelations')
-	dbo3 = dboperator.Dboperator(collname = 'UserHomePages')
+	from weibocrawler.config import getconfig
+	cfg = getconfig()
+	Collection_UserRelationPages = cfg['Collections']['UserRelationPages']
+	Collection_UserRelations = cfg['Collections']['UserRelations']
+	Collection_UserHomePages = cfg['Collections']['UserHomePages']
+
+
+	# dbo1 = dboperator.Dboperator(collname = 'UserRelationPages')
+	# dbo2 = dboperator.Dboperator(collname = 'UserRelations')
+	# dbo3 = dboperator.Dboperator(collname = 'UserHomePages')
+	dbo1 = dboperator.Dboperator(collname = Collection_UserRelationPages)
+	dbo2 = dboperator.Dboperator(collname = Collection_UserRelations)
+	dbo3 = dboperator.Dboperator(collname = Collection_UserHomePages)
 	parse_relation_pages(dbo1, dbo2, dbo3)
 	dbo3.connclose()
 	dbo2.connclose()

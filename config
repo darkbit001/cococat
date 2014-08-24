@@ -3,16 +3,11 @@ port = 27123
 host = 127.0.0.1
 db = weibo
 
-[Dirs]
-data = Data
-search_Result = searchResult
-weibo_Content = weiboContent
-error_weibo_Content = error_weiboContent
-weibo_Content_get = weiboContent_get
-script_Content = scriptContent
-follow_page = followPage
-user_dict = userDict
-
-[Files]
-keyword_file = userdict
-nicklist = nicklist
+[Collections]
+SearchPages = SearchPages_iter1_2014_08_24
+UserHomePages = UserHomePages_iter1_2014_08_24
+Nicks = Nicks_iter1_2014_08_24
+UserRelationPages = UserRelationPages_iter1_2014_08_24
+UserTimelinePages = UserTimelinePages_iter1_2014_08_24
+UserRelations = UserRelations_iter1_2014_08_24
+UserTimelines = UserTimelines_iter1_2014_08_24

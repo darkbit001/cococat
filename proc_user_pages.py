@@ -89,8 +89,12 @@ def parse_user_relation(dbo_userpages):
 	return
 
 def main():
-	dbo = dboperator.Dboperator(collname = 'UserHomePages')
-	# parse_user_base_infos(dbo)
+	from weibocrawler.config import getconfig
+	cfg = getconfig()
+	Collection_UserHomePages = cfg['Collections']['UserHomePages']
+	# dbo = dboperator.Dboperator(collname = 'UserHomePages')
+	dbo = dboperator.Dboperator(collname = Collection_UserHomePages)	
+	parse_user_base_infos(dbo)
 	parse_user_relation(dbo)
 	dbo.connclose()
 

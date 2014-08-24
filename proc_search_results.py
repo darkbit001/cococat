@@ -74,9 +74,16 @@ def parse_search_pages(dbo_SearchPages, dbo_Nicks):
 		for nick in nicklist:
 			dbo2.coll.update({'href': nick['href']}, {'$set': nick}, upsert = True)
 def main():
+	from weibocrawler.config import getconfig
+	cfg = getconfig()
+	Collection_SearchPages = cfg['Collections']['SearchPages']
+	Collection_Nicks = cfg['Collections']['Nicks']
+
 	log('parse_search_pages', 'Running')
-	dbo = dboperator.Dboperator(collname = 'SearchPages')
-	dbo2 = dboperator.Dboperator(collname = 'Nicks')
+	# dbo = dboperator.Dboperator(collname = 'SearchPages')
+	# dbo2 = dboperator.Dboperator(collname = 'Nicks')
+	dbo = dboperator.Dboperator(collname = Collection_SearchPages)
+	dbo2 = dboperator.Dboperator(collname = Collection_Nicks)
 	parse_search_pages(dbo, dbo2)
 	dbo.connclose()
 	dbo2.connclose()
