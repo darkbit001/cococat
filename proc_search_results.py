@@ -69,12 +69,10 @@ def parse_search_pages(dbo_SearchPages, dbo_Nicks):
 	dbo = dbo_SearchPages
 	dbo2 = dbo_Nicks
 	cursor = dbo.coll.find()
-	cursor2 = dbo2.coll.distinct('href')
 	for page in cursor:
 		nicklist = search_page_parser(page)
 		for nick in nicklist:
-			if nick['href'] not in cursor2: 
-				print(dbo2.insert(nick))
+			dbo2.coll.update({'href': nick['href']}, {'$set': nick}, upsert = True)
 def main():
 	log('parse_search_pages', 'Running')
 	dbo = dboperator.Dboperator(collname = 'SearchPages')

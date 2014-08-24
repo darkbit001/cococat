@@ -104,12 +104,13 @@ def parse_user_timeline_pages(dbo_UserTimelinePages, dbo_UserTimelines):
 				continue
 			dbo2.coll.insert(timeline_dic)
 		counter += 1
+	log('counter', str(counter))
 def main():
-	log('parse_user_timeline_pages', 'running')
+	log('parse_user_timeline_pages', 'Running')
 	dbo = dboperator.Dboperator(collname = 'UserTimelinePages')
 	dbo2 = dboperator.Dboperator(collname = 'UserTimelines')
 	parse_user_timeline_pages(dbo, dbo2)
 	dbo.connclose()
 	dbo2.connclose()
-	log('parse_user_timeline_pages', 'finished')
+	log('parse_user_timeline_pages', 'Finished')
 main()
