@@ -39,9 +39,6 @@ def parse_user_base_infos(dbo_userpages):
 		dbo_userpages.coll.update({'_id': _id} ,{'$set': {'userId': userId, 'pageId': pageId, 'nickName': nickName} }, multi = True)
 		if pageId == -1:
 			print(pageUrl)
-
-	log('parse_user_base_infos', 'Finished')
-
 	return
 def find_num(pattern, htmlstr):
 	s1 = set(pattern.findall(htmlstr)[0])
@@ -85,7 +82,6 @@ def parse_user_relation(dbo_userpages):
 			# print(re.search('抱歉，', htmlstr))
 			continue
 		dbo_userpages.coll.update({'_id': _id} ,{'$set': {'followerNum': follower_num, 'followeeNum': followee_num, 'weiboNum': weibo_num} }, multi = True)
-	log('parse_user_relation', 'Finished')
 	return
 
 def main():
@@ -93,9 +89,15 @@ def main():
 	cfg = getconfig()
 	Collection_UserHomePages = cfg['Collections']['UserHomePages']
 	# dbo = dboperator.Dboperator(collname = 'UserHomePages')
-	dbo = dboperator.Dboperator(collname = Collection_UserHomePages)	
+	dbo = dboperator.Dboperator(collname = Collection_UserHomePages)
+	log('parse_user_base_infos', 'Running')	
 	parse_user_base_infos(dbo)
+	log('parse_user_base_infos', 'Finished')
+
+	log('parse_user_relation', 'Running')
 	parse_user_relation(dbo)
+	log('parse_user_relation', 'Finished')
+
 	dbo.connclose()
 
-main()
+# main()

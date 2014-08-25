@@ -23,7 +23,7 @@ def __crawler_each_page(http_request, url):
 	htmlstr = http_request.get(url)
 	return htmlstr
 
-def crawler_pages(http_request, dbo_userpages, dbo_userclawer):
+def get_user_home_pages(http_request, dbo_userpages, dbo_userclawer):
 	# up = weibo_struct.UserHomePage()
 	urls = dbo_userclawer.coll.find({},{'crawled': 1, 'href': 1})
 	# urls = dbo_userclawer.coll.find({'href': 'http://weibo.com/u/3867395827'},{'crawled': 1, 'href': 1})
@@ -43,9 +43,9 @@ def crawler_pages(http_request, dbo_userpages, dbo_userclawer):
 			pagedic['htmlStr'] = htmlstr
 			pagedic['crawlerTime'] = datetime.datetime.now().timestamp()
 
-			dbo_userpages.coll.update({'href': pagedic['href']},{'$set': pagedic}, upsert = True)
+			dbo_userpages.coll.update({'href': pagedic['pageUrl']},{'$set': pagedic}, upsert = True)
 			dbo_userclawer.coll.update({'href': url['href']} ,{'$set': {'crawled': 1 } }, multi = True)
-			log('crawler page', url['href'])
+			log('got user home pages', url['href'])
 
 
 
@@ -63,9 +63,9 @@ def main():
 	dbo1 = dboperator.Dboperator(collname = Collection_UserHomePages) # store: screen_name, page_id, user_id, htmlStr 
 	dbo2 = dboperator.Dboperator(collname = Collection_Nicks)
 	http_request = get_request()
-	crawler_pages(http_request, dbo1, dbo2)
+	get_user_home_pages(http_request, dbo1, dbo2)
 	dbo1.connclose()
 	dbo2.connclose()
 
-main()
+# main()
 

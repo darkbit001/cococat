@@ -88,4 +88,4 @@ def main():
 	dbo.connclose()
 	dbo2.connclose()
 	log('parse_search_pages', 'Finished')
-main()
+# main()

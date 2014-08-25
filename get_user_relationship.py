@@ -91,7 +91,7 @@ def get_users_follow_pages(http_request, dbo_userhomepages, dbo_relationpages, f
 			dbo2.coll.insert(newdic)
 			dbo1.coll.update({'userId': userid} ,{'$set': {str(carwlerflag): 1 } }, multi = True)
 			del newdic
-		log('get_users_follow_pages', 'userid: ' + str(userid) + ' pageid: ' + str(pageid) + ' flag: ' + flag)
+		log('got_users_follow_pages', 'userid: ' + str(userid) + ' pageid: ' + str(pageid) + ' flag: ' + flag)
 	return
 
 def main():
@@ -112,5 +112,5 @@ def main():
 	get_users_follow_pages(http_request, dbo1, dbo2, 'followee')
 	dbo1.connclose()
 	dbo2.connclose()
-main()
+# main()
 

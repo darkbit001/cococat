@@ -128,11 +128,10 @@ def main():
 	Collection_UserRelationPages = cfg['Collections']['UserRelationPages']
 	Collection_UserRelations = cfg['Collections']['UserRelations']
 	Collection_UserHomePages = cfg['Collections']['UserHomePages']
-
-
 	# dbo1 = dboperator.Dboperator(collname = 'UserRelationPages')
 	# dbo2 = dboperator.Dboperator(collname = 'UserRelations')
 	# dbo3 = dboperator.Dboperator(collname = 'UserHomePages')
+	log('proc_user_relation_pages.py', 'Running')
 	dbo1 = dboperator.Dboperator(collname = Collection_UserRelationPages)
 	dbo2 = dboperator.Dboperator(collname = Collection_UserRelations)
 	dbo3 = dboperator.Dboperator(collname = Collection_UserHomePages)
@@ -141,7 +140,7 @@ def main():
 	dbo2.connclose()
 	dbo1.connclose()
 	log('proc_user_relation_pages.py', 'Finished')
-main()
+# main()
 
 
 

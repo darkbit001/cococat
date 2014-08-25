@@ -81,30 +81,38 @@ def parse_timeline_full(div):
 def parse_user_timeline_pages(dbo_UserTimelinePages, dbo_UserTimelines):
 	dbo = dbo_UserTimelinePages
 	dbo2 = dbo_UserTimelines
-	cursor = dbo.coll.find({},{'htmlStr': 1, 'userId': 1, 'pageUrl': 1})
-	cursor2 = dbo2.coll.distinct('mId')
+	cursor = dbo.coll.find({'userId': '1088602681'},{'htmlStr': 1, 'userId': 1, 'pageUrl': 1})
+	# cursor2 = dbo2.coll.distinct('mId')
+	log('Total pages', str(cursor.count()))
 	counter = 0
 	for c in cursor:
-		if counter%200 == 0:
-			log('counter', str(counter))
+		# if counter%200 == 0:
+			# log('counter', str(counter))
 		try:
 			data = load_json(c['htmlStr'])
 		except:
+			# log('error', '1')
 			continue
 		try:
 			tags = divs_parser(data)
 		except:
+			# log('error', '2')
 			continue
+		print(c['pageUrl'])
+		counter2 = 0
 		for tag in tags:
 			timeline_dic = parse_timeline_full(tag)
 			# print(timeline_dic)
 			mid = timeline_dic['mId']
 			# result = dbo2.coll.find({'mId': mid}, {'mId': 1}).count()
-			if mid in cursor2:
-				continue
-			dbo2.coll.insert(timeline_dic)
+			# if mid in cursor2:
+				# continue
+			# dbo2.coll.update({'mId': mid}, {'$set': timeline_dic}, upsert = True)
+			
+			counter2 += 1
+		print(counter2)
 		counter += 1
-	log('counter', str(counter))
+	log('Processed pages', str(counter))
 def main():
 	from weibocrawler.config import getconfig
 	cfg = getconfig()
@@ -113,10 +121,10 @@ def main():
 	log('parse_user_timeline_pages', 'Running')
 	# dbo = dboperator.Dboperator(collname = 'UserTimelinePages')
 	# dbo2 = dboperator.Dboperator(collname = 'UserTimelines')
-	dbo = dboperator.Dboperator(collname = Collection_UserTimelinePages)
+	dbo1 = dboperator.Dboperator(collname = Collection_UserTimelinePages)
 	dbo2 = dboperator.Dboperator(collname = Collection_UserTimelines)
-	parse_user_timeline_pages(dbo, dbo2)
-	dbo.connclose()
+	parse_user_timeline_pages(dbo1, dbo2)
+	dbo1.connclose()
 	dbo2.connclose()
 	log('parse_user_timeline_pages', 'Finished')
 main()

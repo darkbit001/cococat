@@ -130,4 +130,4 @@ def main():
 	crawler_pages(http_request, dbo, queryStrings, 1)
 	dbo.connclose()
 
-main()
+# main()

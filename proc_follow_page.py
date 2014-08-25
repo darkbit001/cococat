@@ -69,5 +69,5 @@ def main():
 	relation_list = __parse_str(page_list)
 	__insert_into_mongodb(relation_list)
 
-if __name__ == '__main__':
-	main()
+# if __name__ == '__main__':
+	# main()
