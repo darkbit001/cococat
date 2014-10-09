@@ -60,7 +60,8 @@ def get_users_follow_pages(http_request, dbo_userhomepages, dbo_relationpages, f
 	'''one page one document'''
 	dbo1 = dbo_userhomepages
 	dbo2 = dbo_relationpages
-	pid_cursor = dbo1.coll.find({}, {'followerCrawled': 1, 'followeeCrawled': 1, 'pageId': 1, 'userId': 1, 'followerNum': 1, 'followeeNum': 1})
+	pid_cursor = dbo1.coll.find({}, {'followerCrawled': 1, 'followeeCrawled': 1, 'pageId': 1, 'userId': 1, 'followerNum': 1, 'followeeNum': 1}, timeout = False)
+	# print(len(list(pid_cursor)))
 	timebatch = datetime.datetime.now().timestamp()
 	pid_list = list(pid_cursor)
 	for user in pid_list:

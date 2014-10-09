@@ -83,7 +83,11 @@ def get_user_timeline_pages(http_request, dbo_userpages, dbo_timelinepages, page
 	'''one page one document'''
 	dbo1 = dbo_userpages
 	dbo2 = dbo_timelinepages
+<<<<<<< HEAD
 	pid_cursor = dbo1.coll.find({'userId': '1088602681'},{'timelineCrawled': 1, 'pageId': 1, 'userId': 1, 'weiboNum': 1})
+=======
+	pid_cursor = dbo1.coll.find({},{'timelineCrawled': 1, 'pageId': 1, 'userId': 1, 'weiboNum': 1}, timeout = False)
+>>>>>>> update iter
 	pid_list = list(pid_cursor)
 	timebatch = datetime.datetime.now().timestamp()
 	for user in pid_list:

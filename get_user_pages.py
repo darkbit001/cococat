@@ -2,6 +2,7 @@ import weibocrawler
 from weibocrawler import log
 from weibocrawler import dboperator
 from weibocrawler import weibo_struct
+import sys
 import time
 import random
 import datetime
@@ -25,7 +26,7 @@ def __crawler_each_page(http_request, url):
 
 def get_user_home_pages(http_request, dbo_userpages, dbo_userclawer):
 	# up = weibo_struct.UserHomePage()
-	urls = dbo_userclawer.coll.find({},{'crawled': 1, 'href': 1})
+	urls = dbo_userclawer.coll.find({},{'crawled': 1, 'href': 1},timeout=False)
 	# urls = dbo_userclawer.coll.find({'href': 'http://weibo.com/u/3867395827'},{'crawled': 1, 'href': 1})
 	timebatch = datetime.datetime.now().timestamp()
 	for url in urls:
@@ -39,6 +40,8 @@ def get_user_home_pages(http_request, dbo_userpages, dbo_userclawer):
 			pagedic['pageUrl'] = url['href']
 			pagedic['nickId'] = url['_id']
 			pagedic['timeBatch'] = timebatch
+			# print(pagedic)
+			# sys.exit()
 			htmlstr = __crawler_each_page(http_request, url['href'])
 			pagedic['htmlStr'] = htmlstr
 			pagedic['crawlerTime'] = datetime.datetime.now().timestamp()
@@ -55,8 +58,8 @@ def main():
 	'''
 	from weibocrawler.config import getconfig
 	cfg = getconfig()
+	Collection_Nicks = cfg['Collections']['Nicks'] # get href	
 	Collection_UserHomePages = cfg['Collections']['UserHomePages']
-	Collection_Nicks = cfg['Collections']['Nicks']
 
 	# dbo1 = dboperator.Dboperator(collname = 'UserHomePages') # store: screen_name, page_id, user_id, htmlStr 
 	# dbo2 = dboperator.Dboperator(collname = 'Nicks')

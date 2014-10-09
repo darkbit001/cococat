@@ -4,10 +4,10 @@ host = 127.0.0.1
 db = weibo
 
 [Collections]
-SearchPages = SearchPages_iter1_2014_08_24
-UserHomePages = UserHomePages_iter1_2014_08_24
-Nicks = Nicks_iter1_2014_08_24
-UserRelationPages = UserRelationPages_iter1_2014_08_24
-UserTimelinePages = UserTimelinePages_iter1_2014_08_24
-UserRelations = UserRelations_iter1_2014_08_24
-UserTimelines = UserTimelines_iter1_2014_08_24
+SearchPages = SearchPages_iter03_10_07
+UserHomePages = UserHomePages_iter03_10_07
+Nicks = Nicks_iter03_10_07
+UserRelationPages = UserRelationPages_iter03_10_07
+UserTimelinePages = UserTimelinePages_iter03_10_07
+UserRelations = UserRelations_iter03_10_07
+UserTimelines = UserTimelines_iter03_10_07
