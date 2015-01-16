@@ -1,6 +1,8 @@
-import weibocrawler
+# import weibocrawler
 from weibocrawler import log
 from weibocrawler import dboperator
+from weibocrawler import WeiboHttpRequest
+from weibocrawler import WeiboLogin
 import time
 import math
 import random
@@ -13,8 +15,8 @@ def get_request(check_cookie_file = True):
 	password = 'e1441430'
 	if check_cookie_file == True:
 		convert_cookies()
-	login = weibocrawler.WeiboLogin(username, password)
-	http_request = weibocrawler.WeiboHttpRequest(login)
+	login = WeiboLogin(username, password)
+	http_request = WeiboHttpRequest(login)
 	return http_request
 
 
@@ -95,7 +97,7 @@ def get_users_follow_pages(http_request, dbo_userhomepages, dbo_relationpages, f
 		log('got_users_follow_pages', 'userid: ' + str(userid) + ' pageid: ' + str(pageid) + ' flag: ' + flag)
 	return
 
-def main():
+def main(http_request = ""):
 	'''
 	This function will crawler user relationship page read from collection Nicks and insert them into collection UserHomePages from MongoDB.
 	'''
@@ -103,12 +105,13 @@ def main():
 	cfg = getconfig()
 	Collection_UserHomePages = cfg['Collections']['UserHomePages']
 	Collection_UserRelationPages = cfg['Collections']['UserRelationPages']
-	
+
 	# dbo1 = dboperator.Dboperator(collname = 'UserHomePages')
 	# dbo2 = dboperator.Dboperator(collname = 'UserRelationPages')
 	dbo1 = dboperator.Dboperator(collname = Collection_UserHomePages)
 	dbo2 = dboperator.Dboperator(collname = Collection_UserRelationPages)
-	http_request = get_request()	
+	if http_request == "":
+		http_request = get_request()	
 	get_users_follow_pages(http_request, dbo1, dbo2, 'follower')
 	get_users_follow_pages(http_request, dbo1, dbo2, 'followee')
 	dbo1.connclose()

@@ -6,10 +6,11 @@
 # 2014-08-11
 #
 
-import weibocrawler
 from weibocrawler import log
 from weibocrawler import dboperator
 from weibocrawler import weibo_struct
+from weibocrawler import WeiboHttpRequest
+from weibocrawler import WeiboLogin
 import time
 import math
 import random
@@ -22,8 +23,8 @@ def get_request(check_cookie_file = True):
 	password = 'e1441430'
 	if check_cookie_file == True:
 		convert_cookies()
-	login = weibocrawler.WeiboLogin(username, password)
-	http_request = weibocrawler.WeiboHttpRequest(login)
+	login = WeiboLogin(username, password)
+	http_request = WeiboHttpRequest(login)
 	return http_request
 
 def get_domain(pageid, userid):
@@ -83,11 +84,9 @@ def get_user_timeline_pages(http_request, dbo_userpages, dbo_timelinepages, page
 	'''one page one document'''
 	dbo1 = dbo_userpages
 	dbo2 = dbo_timelinepages
-<<<<<<< HEAD
-	pid_cursor = dbo1.coll.find({'userId': '1088602681'},{'timelineCrawled': 1, 'pageId': 1, 'userId': 1, 'weiboNum': 1})
-=======
+	# pid_cursor = dbo1.coll.find({'userId': '1088602681'},{'timelineCrawled': 1, 'pageId': 1, 'userId': 1, 'weiboNum': 1})
 	pid_cursor = dbo1.coll.find({},{'timelineCrawled': 1, 'pageId': 1, 'userId': 1, 'weiboNum': 1}, timeout = False)
->>>>>>> update iter
+
 	pid_list = list(pid_cursor)
 	timebatch = datetime.datetime.now().timestamp()
 	for user in pid_list:
@@ -96,8 +95,8 @@ def get_user_timeline_pages(http_request, dbo_userpages, dbo_timelinepages, page
 		pageid = user['pageId']
 		weibonum = int(user.get('weiboNum', -1))
 		crawled = int(user.get('timelineCrawled', 0))
-		# if crawled == 1:
-			# continue
+		if crawled == 1:
+			continue
 		if pageid == -1 or pageid == '':
 			continue
 		if weibonum == -1:
@@ -121,7 +120,7 @@ def get_user_timeline_pages(http_request, dbo_userpages, dbo_timelinepages, page
 		dbo1.coll.update({'userId': userid} ,{'$set': {'timelineCrawled': 1 } }, multi = True)
 		log('get_user_timeline_pages', 'userid: ' + str(userid) + ' pageid: ' + str(pageid))
 
-def main():
+def main(http_request = ""):
 	from weibocrawler.config import getconfig
 	cfg = getconfig()
 	Collection_UserHomePages = cfg['Collections']['UserHomePages']
@@ -130,8 +129,9 @@ def main():
 	dbo2 = dboperator.Dboperator(collname = Collection_UserTimelinePages)
 	# dbo1 = dboperator.Dboperator(collname = 'UserHomePages')
 	# dbo2 = dboperator.Dboperator(collname = 'UserTimelinePages')
-	http_request = get_request()
-	get_user_timeline_pages(http_request, dbo1, dbo2, page_num_upper_bound = 10)
+	if http_request == "":
+		http_request = get_request()
+	get_user_timeline_pages(http_request, dbo1, dbo2, page_num_upper_bound = 20)
 	dbo1.connclose()
 	dbo2.connclose()
-main()
+# main()

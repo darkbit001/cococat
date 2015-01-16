@@ -52,9 +52,9 @@ def relation_parser(htmlStr):
 	user_dict['follower_num'] = -1
 	user_dict['followee_num'] = -1
 	user_dict['weibo_num'] = -1 
-	pattern_follower_num = re.compile(r'<strong node-type=\\"fans\\">([\d\s]+?)<\\/strong>|<strong class=\\+"W_f20\\+">([\d\s]+?)<\\+/strong><span>粉丝<\\/span>|<strong class=\\+"\\+">([\d\s]+?)<\\+/strong><span>粉丝<\\+/span>')
-	pattern_followee_num = re.compile(r'<strong node-type=\\"follow\\">([\d\s]+?)<\\/strong>|<strong class=\\+"W_f20\\+">([\d\s]+?)<\\+/strong><span>关注<\\/span>|<strong class=\\+"\\+">([\d\s]+?)<\\+/strong><span>关注<\\+/span>')
-	pattern_weibo_num = re.compile(r'<strong node-type=\\"weibo\\">([\d\s]+?)<\\/strong>|<strong class=\\+"W_f20\\+">([\d\s]+?)<\\+/strong><span>微博<\\/span>|<strong class=\\+"\\+">([\d\s]+?)<\\+/strong><span>微博<\\+/span>')
+	pattern_follower_num = re.compile(r'<strong class=\\+"W_f18\\+">([\d\s]+?)<\\+/strong><span class=\\+"S_txt2\\+">粉丝<\\+/span>|<strong node-type=\\"fans\\">([\d\s]+?)<\\/strong>|<strong class=\\+"W_f20\\+">([\d\s]+?)<\\+/strong><span>粉丝<\\/span>|<strong class=\\+"\\+">([\d\s]+?)<\\+/strong><span>粉丝<\\+/span>')
+	pattern_followee_num = re.compile(r'<strong class=\\+"W_f18\\">([\d\s]+?)<\\+/strong><span class=\\+"S_txt2\\+">关注<\\+/span>|<strong node-type=\\"follow\\">([\d\s]+?)<\\/strong>|<strong class=\\+"W_f20\\+">([\d\s]+?)<\\+/strong><span>关注<\\/span>|<strong class=\\+"\\+">([\d\s]+?)<\\+/strong><span>关注<\\+/span>')
+	pattern_weibo_num = re.compile(r'<strong class=\\+"W_f18\\+">([\d\s]+?)<\\+/strong><span class=\\+"S_txt2\\+">微博<\\+/span>|<strong node-type=\\"weibo\\">([\d\s]+?)<\\/strong>|<strong class=\\+"W_f20\\+">([\d\s]+?)<\\+/strong><span>微博<\\/span>|<strong class=\\+"\\+">([\d\s]+?)<\\+/strong><span>微博<\\+/span>')
 
 	if pattern_follower_num.search(htmlStr) != None:
 		user_dict['follower_num'] = find_num(pattern_follower_num, htmlStr)
@@ -100,4 +100,4 @@ def main():
 
 	dbo.connclose()
 
-# main()
+main()

@@ -1,7 +1,9 @@
-import weibocrawler
+# import weibocrawler
 from weibocrawler import log
 from weibocrawler import dboperator
 from weibocrawler import weibo_struct
+from weibocrawler import WeiboHttpRequest
+from weibocrawler import WeiboLogin
 import urllib.parse
 import time
 import random
@@ -17,8 +19,8 @@ def get_request(check_cookie_file = True):
 	password = 'e1441430'
 	if check_cookie_file == True:
 		convert_cookies()
-	login = weibocrawler.WeiboLogin(username, password)
-	http_request = weibocrawler.WeiboHttpRequest(login)
+	login = WeiboLogin(username, password)
+	http_request = WeiboHttpRequest(login)
 	return http_request
 	
 def findSearchNum(content):
